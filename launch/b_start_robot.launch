@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <!-- Launch Gazebo -->
+
+
+  <!-- Launch Map Server -->
+
+
+  <!-- Launch Robot -->
+  <arg name="fov"       default="60"/>
+
+  <include file="$(find uol_turtlebot_simulator)/launch/turtlebot_world.launch">
+    <arg name="world_file" value="$(find uol_turtlebot_simulator)/worlds/maze1.world" />
+    <arg name="fov" value="$(arg fov)" />
+  </include>
+
+  <!-- Start Navigation System -->
+  <node pkg="vrviz" name="vrviz_test_navigation" type="vrviz_navigation.py" output="screen"/>
+
+</launch>
+
+

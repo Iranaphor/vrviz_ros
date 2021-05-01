@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch>
+
+  <!-- Launch Robot -->
+  <include file="$(find vrviz)/launch/b_start_robot.launch" />
+
+  <!-- Start MQTT Server -->
+  <include file="$(find vrviz)/launch/mqtt.launch" >
+     <arg name="mqtt_bridge_port" value="$(optenv MQTT_BRIDGE_IP localhost)"/>
+     <arg name="mqtt_bridge_ip" value="$(optenv MQTT_BRIDGE_IP localhost)"/>
+  </include>
+
+
+</launch>
+
+
