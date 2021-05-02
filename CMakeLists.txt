@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   geometry_msgs
   message_generation
+  rosbridge_server
   rosduct
   rospy
   std_msgs

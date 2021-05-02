@@ -4,42 +4,56 @@
 # https://answers.ros.org/question/47973/publishing-to-move_base_simplegoal/
 
 import rospy
+import actionlib
 from std_msgs.msg import String
-# import actionlib
-# from geometry_msgs.msg import Twist
-# from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
-#
-# def format_goal_obj(pos):
-#     print("format goal obj");
-#     goal = MoveBaseGoal()
-#     goal.target_pose.header.frame_id = "map"
-#     goal.target_pose.header.stamp = rospy.Time.now()
-#     goal.target_pose.header.seq = 100
-#     goal.target_pose.pose.position.x = pos[0]
-#     goal.target_pose.pose.position.y = pos[1]
-#     goal.target_pose.pose.orientation.w = 1
-#     return goal
-#
+from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+
+def format_goal_obj(pos):
+    rospy.loginfo("Formatted goal object");
+    goal = MoveBaseGoal()
+    goal.target_pose.header.frame_id = "map"
+    goal.target_pose.header.stamp = rospy.Time.now()
+    goal.target_pose.header.seq = 100
+    goal.target_pose.pose.position.x = pos[0]
+    goal.target_pose.pose.position.y = pos[1]
+    goal.target_pose.pose.orientation.w = 1
+    return goal
+
 # goal_list = [(0, 3), (5, 1), (-5, 1)]
-# def get_next_goal():
-#     print("get next goal");
-#     goal_list.append(goal_list.pop(0))
-#     return goal_list[0]
+goal_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+def get_next_goal():
+    goal_list.append(goal_list.pop(0))
+    rospy.loginfo("Identified next goal: (%s,%s)" % (goal_list[0][0], goal_list[0][1]))
+    return goal_list[0]
 
 if __name__ == '__main__':
+    rospy.sleep(1)
     rospy.init_node('vrviz_test_navigation')
-    print("Node inited")
+    rospy.loginfo("Node inited")
+    rospy.sleep(1)
 
-    print("Creating publisher")
-    p = rospy.Publisher("hello", String, queue_size=5)
+    # rospy.loginfo("Creating publisher")
+    # p = rospy.Publisher("hello", String, queue_size=5)
+    # rospy.sleep(1)
 
-    print("Publishing message")
-    p.publish(String("hello there"))
+    # rospy.loginfo("Publishing message")
+    # p.publish(String("hello there"))
+    # rospy.sleep(1)
 
-    print("Publishing done")
+    # rospy.loginfo("Publishing done")
 
-    # client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
-    # def move_complete(s,r): print("%s|%s"%(s,r)); client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
-    # client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
+    rospy.loginfo("Defining Client")
+    client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+    rospy.sleep(1)
+
+    rospy.loginfo("Defining Response Function")
+    def move_complete(s,r):
+        rospy.loginfo("Result: %s" % s)
+        client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
+    rospy.sleep(1)
+
+    rospy.loginfo("Sending Initial Goal")
+    client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
+    rospy.sleep(1)
 
     rospy.spin()
