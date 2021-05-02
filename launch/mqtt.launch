@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<launch>
+  <!-- control port -->
+  <arg name="control_topic" default="__dynamic_server" doc="control port for dynamic server"/>
+
+  <!-- communication channels -->
+  <arg name="mqtt_bridge_ip" default="$(optenv MQTT_BRIDGE_IP localhost)" doc="ip of bridge"/>
+  <arg name="mqtt_bridge_port" default="$(optenv MQTT_BRIDGE_PORT 8883)" doc="port of bridge"/>
+
+  <!-- run communication manager & initialise channels -->
+  <node pkg="mqtt_bridge" name="mqtt_bridge" type="mqtt_bridge_node.py" output="screen" respawn="true">
+    <rosparam command="load" subst_value="true" file="$(find vrviz_ros)/config/mqtt_dynamic_bridge_server_config.yaml"/>
+  </node>
+
+  <!-- open connection for external access -->
+  <node pkg="mqtt_bridge" name="mosquitto_server" type="mosquitto_server.sh" output="screen" args="$(arg mqtt_bridge_port)"/>
+
+</launch>

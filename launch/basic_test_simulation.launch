@@ -1,16 +1,18 @@
 <?xml version="1.0" ?>
 <launch>
+  <arg name="mqtt_bridge_ip" default="$(optenv MQTT_BRIDGE_IP localhost)" doc="ip of bridge"/>
+  <arg name="mqtt_bridge_port" default="$(optenv MQTT_BRIDGE_PORT 8883)" doc="port of bridge"/>
+
+  <arg name="auto_launch_navigation" value="false"/>  <!-- TODO: change to true as default -->
 
   <!-- Launch Robot -->
-  <include file="$(find vrviz)/launch/b_start_robot.launch" />
+  <include file="$(find uol_turtlebot_simulator)/launch/object-search-training.launch"/>
+
+  <!-- Launch Navigation -->
+  <node pkg="vrviz_ros" name="vrviz_test_navigation" type="b_navigate_robot.py" output="screen" if="$(arg auto_launch_navigation)"/>
 
   <!-- Start MQTT Server -->
-  <include file="$(find vrviz)/launch/mqtt.launch" >
-     <arg name="mqtt_bridge_port" value="$(optenv MQTT_BRIDGE_IP localhost)"/>
-     <arg name="mqtt_bridge_ip" value="$(optenv MQTT_BRIDGE_IP localhost)"/>
-  </include>
-
+  <include file="$(find vrviz_ros)/launch/mqtt.launch" />
 
 </launch>
-
 

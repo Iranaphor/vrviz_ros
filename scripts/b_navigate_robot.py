@@ -1,28 +1,45 @@
 #!/usr/bin/env python
 
-from rospy import init_node, Publisher
-from move_base_msgs.msg import MoveBaseActionGoal, MoveBaseActionFeedback
+# https://hotblackrobotics.github.io/en/blog/2018/01/29/action-client-py/
+# https://answers.ros.org/question/47973/publishing-to-move_base_simplegoal/
 
-"""
-goal_list = [...]
-while not rospy.is_shutdown():
-    status = robot.is_at_goal()
-    if status == success:
-        movebase.publish(random_sample(goal_list))
-"""
+import rospy
+from std_msgs.msg import String
+# import actionlib
+# from geometry_msgs.msg import Twist
+# from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
+#
+# def format_goal_obj(pos):
+#     print("format goal obj");
+#     goal = MoveBaseGoal()
+#     goal.target_pose.header.frame_id = "map"
+#     goal.target_pose.header.stamp = rospy.Time.now()
+#     goal.target_pose.header.seq = 100
+#     goal.target_pose.pose.position.x = pos[0]
+#     goal.target_pose.pose.position.y = pos[1]
+#     goal.target_pose.pose.orientation.w = 1
+#     return goal
+#
+# goal_list = [(0, 3), (5, 1), (-5, 1)]
+# def get_next_goal():
+#     print("get next goal");
+#     goal_list.append(goal_list.pop(0))
+#     return goal_list[0]
 
+if __name__ == '__main__':
+    rospy.init_node('vrviz_test_navigation')
+    print("Node inited")
 
-#self.subscriberF1 = rospy.Subscriber("/move_base/status", GoalStatusArray, self.listenerF1)
-#LISTENERS_DATA.GOAL_STATUS = data.status_list[len(data.status_list)-1].text
-#self.publisher_GOAL = rospy.Publisher("/move_base/goal", MoveBaseActionGoal, queue_size = 2)
+    print("Creating publisher")
+    p = rospy.Publisher("hello", String, queue_size=5)
 
-	# def publish_GOAL2(self, new_x, new_y, angle, move_type="move"):
-	# 	goal = MoveBaseActionGoal()
-	# 	goal.goal.target_pose.header.seq = 0
-	# 	goal.goal.target_pose.header.stamp = rospy.Time.now()
-	# 	goal.goal.target_pose.header.frame_id = 'map'
-	# 	goal.goal.target_pose.pose.position.x = new_x
-	# 	goal.goal.target_pose.pose.position.y = new_y
-	# 	goal.goal.target_pose.pose.orientation.w = 1
-	# 	self.publisher_GOAL.publish(goal)
+    print("Publishing message")
+    p.publish(String("hello there"))
 
+    print("Publishing done")
+
+    # client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
+    # def move_complete(s,r): print("%s|%s"%(s,r)); client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
+    # client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
+
+    rospy.spin()
