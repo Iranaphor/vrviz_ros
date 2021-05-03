@@ -5,9 +5,7 @@
   <description>The VRViz package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <!-- Example:  -->
-  <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="name@mail.com">name</maintainer>
+  <maintainer email="jheselden+vrviz@lincoln.ac.uk">James Heselden</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -18,72 +16,36 @@
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/rasberry_coordination</url> -->
+  <url type="repository">http://www.github.com/Iranaphor/VRViz_ROS</url>
 
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
   <!-- Authors do not have to be maintainers, but could be -->
-  <!-- Example: -->
-  <!-- <author email="jane.doe@example.com">Jane Doe</author> -->
+  <author email="jheselden+vrviz@lincoln.ac.uk">James Heselden</author>
+  <author email="jstevenson+vrviz@lincoln.ac.uk">Jack Stevenson</author>
 
 
   <!-- The *depend tags are used to specify dependencies -->
   <!-- Dependencies can be catkin packages or system dependencies -->
-  <!-- Examples: -->
-  <!-- Use depend as a shortcut for packages that are both build and exec dependencies -->
-  <!--   <depend>roscpp</depend> -->
-  <!--   Note that this is equivalent to the following: -->
-  <!--   <build_depend>roscpp</build_depend> -->
-  <!--   <exec_depend>roscpp</exec_depend> -->
-  <!-- Use build_depend for packages you need at compile time: -->
-  <!--   <build_depend>message_generation</build_depend> -->
-  <!-- Use build_export_depend for packages you need in order to build against this package: -->
-  <!--   <build_export_depend>message_generation</build_export_depend> -->
+
+  <!-- Use depend as a shortcut for packages that are both build, export and execute dependencies -->
+  <!-- More info can be found: http://wiki.ros.org/catkin/package.xml#Dependencies -->
+  <depend>actionlib</depend>
+  <depend>message_runtime</depend>
+  <depend>move_base</depend>
+  <depend>mqtt_bridge</depend>
+  <depend>rospy</depend>
+  <depend>std_msgs</depend>
+  <depend>topic_tools</depend>
+  <depend>uol_turtlebot_simulator</depend>
+
   <!-- Use buildtool_depend for build tool packages: -->
-  <!--   <buildtool_depend>catkin</buildtool_depend> -->
-  <!-- Use exec_depend for packages you need at runtime: -->
-  <!--   <exec_depend>message_runtime</exec_depend> -->
-  <!-- Use test_depend for packages you need only for testing: -->
-  <!--   <test_depend>gtest</test_depend> -->
-  <!-- Use doc_depend for packages you need only for building documentation: -->
-  <!--   <doc_depend>doxygen</doc_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>actionlib</build_depend>
-  <build_depend>geometry_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
-  <build_depend>rosbridge_server</build_depend>
-  <build_depend>rosduct</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>std_srvs</build_depend>
-  <build_depend>topic_tools</build_depend>
+  <!-- Use test_depend for packages you need only for testing: -->
+  <!--   <test_depend>gtest</test_depend> -->
 
-  <build_export_depend>actionlib</build_export_depend>
-  <build_export_depend>geometry_msgs</build_export_depend>
-  <build_export_depend>message_generation</build_export_depend>
-  <build_export_depend>rosbridge_server</build_export_depend>
-  <build_export_depend>rosduct</build_export_depend>
-  <build_export_depend>rospy</build_export_depend>
-  <build_export_depend>std_msgs</build_export_depend>
-  <build_export_depend>std_srvs</build_export_depend>
-  <build_export_depend>topic_tools</build_export_depend>
+  <!-- Use doc_depend for packages you need only for building documentation: -->
+  <!--   <doc_depend>doxygen</doc_depend> -->
 
-  <exec_depend>actionlib</exec_depend>
-  <exec_depend>geometry_msgs</exec_depend>
-  <exec_depend>message_runtime</exec_depend>
-  <exec_depend>rosbridge_server</exec_depend>
-  <exec_depend>rosduct</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>std_srvs</exec_depend>
-  <build_export_depend>topic_tools</build_export_depend>
-
-
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
 </package>
