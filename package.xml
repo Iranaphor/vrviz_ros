@@ -5,7 +5,7 @@
   <description>The VRViz package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <maintainer email="jheselden+vrviz@lincoln.ac.uk">James Heselden</maintainer>
+  <maintainer email="jheselden+vrviz_ros@lincoln.ac.uk">James Heselden</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -21,8 +21,8 @@
 
   <!-- Author tags are optional, multiple are allowed, one per tag -->
   <!-- Authors do not have to be maintainers, but could be -->
-  <author email="jheselden+vrviz@lincoln.ac.uk">James Heselden</author>
-  <author email="jstevenson+vrviz@lincoln.ac.uk">Jack Stevenson</author>
+  <author email="jheselden+vrviz_ros@lincoln.ac.uk">James Heselden</author>
+  <author email="jastevenson+vrviz_ros@lincoln.ac.uk">Jack Stevenson</author>
 
 
   <!-- The *depend tags are used to specify dependencies -->
