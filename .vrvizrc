@@ -1,0 +1,34 @@
+#
+source /opt/ros/melodic/setup.bash
+
+export ROS_MASTER=localhost
+export C_PORT=11311
+export S_PORT=11411
+
+export MQTT_BRIDGE_IP=localhost
+export MQTT_BRIDGE_PORT=8883
+
+function vrviz_client () {
+    export PORT=${C_PORT}
+    export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
+    echo "Terminal connected to client"
+}
+
+function vrviz_server () {
+    export PORT=${S_PORT}
+    export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
+    echo "Terminal connected to server"
+}
+
+function vrviz_remote () {
+    export PORT=${MQTT_BRIDGE_PORT}
+    export ROS_MASTER_URI=http://${MQTT_BRIDGE_IP}:${MQTT_BRIDGE_PORT}
+    echo "Terminal connected to remote"
+}
+
+vrviz_server
+
+function vrviz_test_simple () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
+#function vrviz_test_intense () { vrviz_server; roslaunch vrviz_ros intensive_test_simulation.launch ; }
+
+source ~/$ws_path/devel/setup.bash

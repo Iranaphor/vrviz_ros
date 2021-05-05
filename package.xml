@@ -37,7 +37,7 @@
   <depend>rospy</depend>
   <depend>std_msgs</depend>
   <depend>topic_tools</depend>
-  <depend>uol_turtlebot_simulator</depend>
+  <depend>turtlebot_gazebo</depend>
 
   <!-- Use buildtool_depend for build tool packages: -->
   <buildtool_depend>catkin</buildtool_depend>
