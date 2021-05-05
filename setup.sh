@@ -1,6 +1,12 @@
 sudo apt-get update && sudo apt-get dist-upgrade && sudo apt-get install curl
+
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+curl -sSL 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0xC1CF6E31E6BADE8868B172B4F42ED6FBAB17C654' | sudo apt-key add -
+sudo apt update
+
 curl https://raw.githubusercontent.com/LCAS/rosdistro/master/lcas-rosdistro-setup.sh | bash -
-sudo apt-get install ros-melodic-desktop
+sudo apt install ros-melodic-ros-base
 
 read -p "Set workspace path: ~/" ws_path
 #export ws_path=vrviz_dev_ws
