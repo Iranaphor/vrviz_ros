@@ -12,7 +12,7 @@
   </include>
 
   <!-- Start MQTT Server -->
-  <include file="$(find vrviz_ros)/launch/mqtt.launch" />
+<!--  <include file="$(find vrviz_ros)/launch/mqtt.launch" />-->
 
   <!-- Launch Navigation -->
   <include file="$(find vrviz_ros)/launch/b_start_robot.launch"/>

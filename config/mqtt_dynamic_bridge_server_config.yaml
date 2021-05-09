@@ -7,8 +7,8 @@ mqtt:
     keepalive: 60
   private_path: device/001
 # Default is json serialiser, msgpack is more efficient
-serializer: msgpack:dumps
-deserializer: msgpack:loads
+serializer: json:dumps
+deserializer: json:loads
 bridge:
 
 # Dynamic Bridge Server: This server should almost always be enabled as it
@@ -17,3 +17,26 @@ bridge:
   - factory: mqtt_bridge.bridge:DynamicBridgeServer
     control_topic: '$(arg control_topic)'
 
+#  - factory: mqtt_bridge.bridge:PublishBridge
+#    control_topic: '$(arg control_topic)'
+#    msg_type: 'nav_msgs.msg:Odometry'
+#    topic_from: '/odom' #local topic identifier
+#    topic_to: 'm2/odom' #remote topic identifier
+#    latched: false
+#    qos: 0
+
+#  - factory: mqtt_bridge.bridge:SubscribeBridge
+#    control_topic: '$(arg control_topic)'
+#    msg_type: 'std_msgs.msg:String'
+#    topic_from: '/test' #local topic identifier
+#    topic_to: 'm2/test' #remote topic identifier
+#    latched: false
+#    qos: 0
+
+  #  - factory: mqtt_bridge.bridge:SubscribeBridge
+  #    control_topic: '$(arg control_topic)'
+  #    msg_type: 'std_msgs.msg:String'
+  #    topic_from: 'm2/test' #local topic identifier
+  #    topic_to: '/test' #remote topic identifier
+  #    latched: false
+  #    qos: 0
