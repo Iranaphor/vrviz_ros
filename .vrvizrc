@@ -1,5 +1,9 @@
-#
-source /opt/ros/melodic/setup.bash
+function file_dir () { echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" ; }
+function ws_dir () { echo `file_dir` | awk -F'/src' '{print $1}' ; }
+export VRVIZ_ROS_GIT_DIR=`file_dir`
+export VRVIZ_ROS_WS_DIR=`ws_dir`
+
+function vrvizrc () { gedit $VRVIZ_ROS_GIT_DIR/.vrvizrc ; }
 
 export ROS_MASTER=localhost
 export C_PORT=11311
@@ -28,7 +32,6 @@ function vrviz_remote () {
 
 vrviz_server
 
-function vrviz_test_simple () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
-#function vrviz_test_intense () { vrviz_server; roslaunch vrviz_ros intensive_test_simulation.launch ; }
+function vbasic () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
+#function vintense () { vrviz_server; roslaunch vrviz_ros intensive_test_simulation.launch ; }
 
-source ~/$ws_path/devel/setup.bash
