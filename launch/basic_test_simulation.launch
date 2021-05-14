@@ -3,12 +3,12 @@
   <arg name="mqtt_bridge_ip" default="$(optenv MQTT_BRIDGE_IP localhost)" doc="ip of bridge"/>
   <arg name="mqtt_bridge_port" default="$(optenv MQTT_BRIDGE_PORT 8883)" doc="port of bridge"/>
 
-<!--  <rosparam param="mqtt_debug_option">debug</rosparam>-->
+  <rosparam param="mqtt_debug_option">debugg</rosparam>
 
   <!-- Launch Robot -->
   <include file="$(find turtlebot_gazebo)/launch/turtlebot_world.launch">
     <arg name="world_file" value="$(find vrviz_ros)/maps/object-search-training.world" />
-    <arg name="gui" value="false"/>
+    <arg name="gui" value="true"/>
   </include>
   <include file="$(find turtlebot_gazebo)/launch/amcl_demo.launch">
     <arg name="map_file" value="$(find vrviz_ros)/maps/object-search-arena.yaml" />
@@ -19,6 +19,6 @@
   <!--TODO: setup system in mqtt to unsubscribe on request (be nicer on processing resources) -->
 
   <!-- Launch Navigation -->
-  <include file="$(find vrviz_ros)/launch/b_start_robot.launch"/>
+<!--  <include file="$(find vrviz_ros)/launch/b_start_robot.launch"/>-->
 
 </launch>
