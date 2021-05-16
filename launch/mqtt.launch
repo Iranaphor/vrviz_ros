@@ -3,6 +3,8 @@
   <!-- control port -->
   <arg name="control_topic" default="__dynamic_server" doc="control port for dynamic server"/>
 
+  <rosparam param="mqtt_debug_option">debugg</rosparam>
+
   <!-- communication channels -->
   <arg name="mqtt_bridge_ip" default="$(optenv MQTT_BRIDGE_IP localhost)" doc="ip of bridge"/>
   <arg name="mqtt_bridge_port" default="$(optenv MQTT_BRIDGE_PORT 8883)" doc="port of bridge"/>

@@ -5,9 +5,7 @@ function ws_dir () { echo `file_dir` | awk -F'/src' '{print $1}' ; }
 export VRVIZ_ROS_GIT_DIR=`file_dir`
 export VRVIZ_ROS_WS_DIR=`ws_dir`
 
-#function vrvizrc () { gedit $VRVIZ_ROS_GIT_DIR/.vrvizrc ; }
-
-export ROS_MASTER=localhost
+export ROS_MASTER=127.0.0.1
 export S_PORT=11411
 export C_PORT=11311
 
@@ -18,19 +16,15 @@ export MQTT_BRIDGE_PORT=8883
 function vrviz_server () {
   export PORT=${S_PORT}
   export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
-  #if [ "$1" = "q" ]; then
-  #  echo "        - [Terminal connected to vrviz_server]";
-  #else
-  #  echo "Terminal connected to vrviz_server";
-  #fi
+  export ROS_IP=$ROS_MASTER
   echo "Terminal connected to vrviz_server";
 }
-#vrviz_server "q"
 
 
 function vrviz_client () {
   export PORT=${C_PORT}
   export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
+  export ROS_IP=$ROS_MASTER
   echo "Terminal connected to vrviz_client"
 }
 
@@ -38,24 +32,11 @@ function vrviz_client () {
 function vrviz_remote () {
   export PORT=${MQTT_BRIDGE_PORT}
   export ROS_MASTER_URI=http://${MQTT_BRIDGE_IP}:${MQTT_BRIDGE_PORT}
+  export ROS_IP=$ROS_MASTER
   echo "Terminal connected to vrviz_remote"
 }
 
-
-function set_uri () {
-  if [ -z ${1+x} ]; then
-    vrviz_server;
-  else
-    if [ $1 = "1" ]; then vrviz_client;
-    elif [ $1 = "2" ]; then vrviz_remote;
-    else vrviz_server;
-    fi ;
-  fi ;
-}
-
-#function vbasic () { set_uri $1; roslaunch vrviz_ros basic_test_simulation.launch ; }
 function vbasic () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
-#function vintense () { vrviz_server; roslaunch vrviz_ros intensive_test_simulation.launch ; }
 
 
 
