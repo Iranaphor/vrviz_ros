@@ -1,20 +1,31 @@
 <?xml version="1.0" ?>
 <launch>
+
+  <!-- Topics configuration location -->
+  <arg name="topic_config" default="$(find vrviz_ros)/config/default_system_config.yaml"/>
+  <arg name="mesh_config" default="$(find vrviz_ros)/config/turtlebot_mesh_config.yaml"/>
+
   <!-- control port -->
   <arg name="control_topic" default="__dynamic_server" doc="control port for dynamic server"/>
 
-  <rosparam param="mqtt_debug_option">debugg</rosparam>
-
   <!-- communication channels -->
   <arg name="mqtt_bridge_ip" default="$(optenv MQTT_BRIDGE_IP localhost)" doc="ip of bridge"/>
-  <arg name="mqtt_bridge_port" default="$(optenv MQTT_BRIDGE_PORT 8883)" doc="port of bridge"/>
+  <arg name="mqtt_bridge_port" default="$(optenv MQTT_BRIDGE_PORT 8883)" doc="port of bridge (set in .vrvizrc)"/>
 
   <!-- run communication manager & initialise channels -->
+  <rosparam param="mqtt_debug_option">debugg</rosparam>
   <node pkg="mqtt_bridge" name="mqtt_bridge" type="mqtt_bridge_node.py" output="screen" respawn="true">
     <rosparam command="load" subst_value="true" file="$(find vrviz_ros)/config/mqtt_dynamic_bridge_server_config.yaml"/>
   </node>
+  
+  <!-- Send initial topic list -->
+  <rosparam param="vrviz_debug_level">debug</rosparam>
+  <node pkg="vrviz_ros" name="config_publisher" type="publish_config.py" args="$(arg topic_config)" output="screen"/>
+  <!-- <node pkg="vrviz_ros" name="mesh_publisher" type="publish_mesh.py" args="$(arg mesh_config)" output="screen"/> -->
+  
 
   <!-- open connection for external access -->
   <node pkg="mqtt_bridge" name="mosquitto_server" type="mosquitto_server.sh" output="screen" args="$(arg mqtt_bridge_port)"/>
-
+  
+  
 </launch>

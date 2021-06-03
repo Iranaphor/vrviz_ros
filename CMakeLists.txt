@@ -8,14 +8,10 @@ project(vrviz_ros)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  actionlib
   geometry_msgs
   message_generation
-  rosbridge_server
-  rosduct
   rospy
   std_msgs
-  std_srvs
   topic_tools
 )
 
@@ -53,11 +49,14 @@ catkin_python_setup()
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  FrameTransform.msg
+  MqttParameters.msg
+  SystemConfig.msg
+  Topic.msg
+  UnityModifier.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -78,6 +77,10 @@ catkin_python_setup()
 #   DEPENDENCIES
 #   std_msgs
 # )
+
+generate_messages(
+  DEPENDENCIES std_msgs geometry_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -110,7 +113,7 @@ catkin_python_setup()
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES vrrviz
+#  LIBRARIES vrviz
   CATKIN_DEPENDS std_msgs message_runtime
 #  DEPENDS system_lib
 )
@@ -187,7 +190,12 @@ include_directories(
 #   # myfile1
 #   # myfile2
 #   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+# ) 
+
+foreach (dir launch config msg scripts)
+    install(DIRECTORY ${dir}/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir}/)
+endforeach(dir)
 
 #############
 ## Testing ##

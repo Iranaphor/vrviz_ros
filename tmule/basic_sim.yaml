@@ -1,0 +1,13 @@
+---
+session: vrviz_basic_sim
+init_cmd: |
+  #exec /bin/bash
+  source ~/bashrc
+  
+windows:
+- name: basic
+  panes:
+  - sleep 00 ; vrviz_server ; roslaunch vrviz_ros basic_test_simulation.launch
+  - sleep 10 ; vrviz_server ; roslaunch vrviz_ros mqtt.launch
+  - sleep 10 ; vrviz_server ; roslaunch vrviz_ros b_start_robot.launch
+  - sleep 05 ; vrviz_server ; rostopic echo /vrviz/config

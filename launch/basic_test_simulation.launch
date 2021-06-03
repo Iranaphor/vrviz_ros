@@ -15,10 +15,10 @@
   </include>
 
   <!-- Start MQTT Server -->
-<!--  <include file="$(find vrviz_ros)/launch/mqtt.launch" />-->
+  <!--  <include file="$(find vrviz_ros)/launch/mqtt.launch" />-->
   <!--TODO: setup system in mqtt to unsubscribe on request (be nicer on processing resources) -->
 
   <!-- Launch Navigation -->
-<!--  <include file="$(find vrviz_ros)/launch/b_start_robot.launch"/>-->
+  <!--  <include file="$(find vrviz_ros)/launch/b_start_robot.launch"/>-->
 
 </launch>

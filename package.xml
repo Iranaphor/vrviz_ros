@@ -11,7 +11,7 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <license>CC BY-NC 3.0</license>
 
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
@@ -31,6 +31,8 @@
   <!-- Use depend as a shortcut for packages that are both build, export and execute dependencies -->
   <!-- More info can be found: http://wiki.ros.org/catkin/package.xml#Dependencies -->
   <depend>actionlib</depend>
+  <depend>geometry_msgs</depend>
+  <depend>message_generation</depend>
   <depend>message_runtime</depend>
   <depend>move_base</depend>
   <depend>mqtt_bridge</depend>

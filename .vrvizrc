@@ -2,11 +2,12 @@ echo "    - VRViz-ROS .vrvizrc" | awk '{ gsub("VRViz-ROS",  "\033[1;33m&\033[0m"
 
 function file_dir () { echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" ; }
 function ws_dir () { echo `file_dir` | awk -F'/src' '{print $1}' ; }
+
 export VRVIZ_ROS_GIT_DIR=`file_dir`
 export VRVIZ_ROS_WS_DIR=`ws_dir`
 
 export ROS_MASTER=127.0.0.1
-export S_PORT=11411
+export S_PORT=11412
 export C_PORT=11311
 
 export MQTT_BRIDGE_IP=localhost
@@ -17,7 +18,7 @@ function vrviz_server () {
   export PORT=${S_PORT}
   export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
   export ROS_IP=$ROS_MASTER
-  echo "Terminal connected to vrviz_server";
+  echo "Terminal connected to vrviz_server on $ROS_IP";
 }
 
 
@@ -25,7 +26,7 @@ function vrviz_client () {
   export PORT=${C_PORT}
   export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
   export ROS_IP=$ROS_MASTER
-  echo "Terminal connected to vrviz_client"
+  echo "Terminal connected to vrviz_client on $ROS_IP"
 }
 
 
@@ -33,12 +34,20 @@ function vrviz_remote () {
   export PORT=${MQTT_BRIDGE_PORT}
   export ROS_MASTER_URI=http://${MQTT_BRIDGE_IP}:${MQTT_BRIDGE_PORT}
   export ROS_IP=$ROS_MASTER
-  echo "Terminal connected to vrviz_remote"
+  echo "Terminal connected to vrviz_remote on $ROS_IP"
 }
 
 function vbasic () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
 
+function vsim () { tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml relaunch ; }
 
+function rebuild() {
+	cd $VRVIZ_ROS_WS_DIR
+	rm -r build/
+	rm -r devel/
+	catkin_make
+	source ./devel/setup.bash
+}
 
 
 
