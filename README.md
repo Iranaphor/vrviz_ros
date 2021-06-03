@@ -1,2 +1,2 @@
 # VRViz-ROS
-VRVis ROS Client
+VRViz ROS Package
