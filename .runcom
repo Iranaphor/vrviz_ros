@@ -21,14 +21,12 @@ function vrviz_server () {
   echo "Terminal connected to vrviz_server on $ROS_IP";
 }
 
-
 function vrviz_client () {
   export PORT=${C_PORT}
   export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
   export ROS_IP=$ROS_MASTER
   echo "Terminal connected to vrviz_client on $ROS_IP"
 }
-
 
 function vrviz_remote () {
   export PORT=${MQTT_BRIDGE_PORT}
@@ -37,9 +35,13 @@ function vrviz_remote () {
   echo "Terminal connected to vrviz_remote on $ROS_IP"
 }
 
+
+function vcd () { roscd vrviz_ros }
 function vbasic () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
 
-function vsim () { tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml relaunch ; }
+function vsim () {           tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml relaunch ; }
+function vsim_launch () {    tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml launch ; }
+function vsim_terminate () { tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml terminate ; }
 
 function rebuild() {
 	cd $VRVIZ_ROS_WS_DIR
@@ -48,12 +50,3 @@ function rebuild() {
 	catkin_make
 	source ./devel/setup.bash
 }
-
-
-
-
-
-
-
-
-
