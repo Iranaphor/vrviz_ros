@@ -6,7 +6,10 @@ import yaml
 from pprint import pprint
 from tf2_ros.buffer import Buffer
 
-from vrviz_ros.msg import SystemConfig, Topic, UnityModifier, MqttParameters, FrameTransform
+from vrviz_ros.msg import SystemConfig, Topic, UnityModifier, MqttParameters
+from visualization_msgs.msg import Marker
+from geometry_msgs.msg import Point, Quaternion, Vector3
+from std_msgs.msg import ColorRGBA
 
 from tf2_ros.buffer import Buffer # github_src https://github.com/ros/geometry2/blob/noetic-devel/tf2_ros/src/tf2_ros/buffer.py
 from tf2_ros.transform_listener import TransformListener
@@ -51,30 +54,24 @@ def validate_field(field_container, field_id, default="", required=False):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2:
-        sys.exit("Not enough parameters. Requires at least one parameter that is a path to a config yaml file.")
-    if sys.argv[1] is None:
-        sys.exit("No config file set!")
-    if sys.argv[1] == "default":
-        sys.argv[1] = "../config/default_config.yaml"
 
+    debug_level = sys.argv[1] if (len(sys.argv) > 1) else None
 
-    config_data = get_config_data(sys.argv[1])
-    if not config_data:
-        sys.exit("Config file does not exist.")
-
-
-    debug_level = rospy.get_param('vrviz_debug_level', '')
     if debug_level == 'debug':
         rospy.init_node('vrviz_config_publisher', anonymous=False, log_level=rospy.DEBUG) #TODO: simplify this conditional
     else:
         rospy.init_node('vrviz_config_publisher', anonymous=False)
 
 
+    print(rospy.get_param("~topic_config", "1"))
+    print(rospy.get_param("~mesh_config", "2"))
+
+    config_data = get_config_data( rospy.get_param("~topic_config", ""))
+    mesh_config_data = get_config_data( rospy.get_param("~mesh_config", ""))
+
 
 
     rospy.sleep(1)
-
 
     system_config_obj = SystemConfig()
     system_config_obj.topic_list = []
@@ -103,11 +100,61 @@ if __name__ == '__main__':
         rospy.logdebug(system_config_obj)
         print("\n\n\n-=-=-=-=-=-=-=-")
 
+
     system_config_obj.frame_list = get_frames()
+
+
+
+    system_config_obj.mesh_list = []
+    for mesh in mesh_config_data['mesh_list']:
+        marker_obj = Marker()
+
+        mesh['frame_id'] = validate_field(mesh, 'frame_id', required=True)
+        mesh['ns'] = validate_field(mesh, 'shape_name', default="model_"+mesh['frame_id'].replace("_link",""))
+        mesh['type'] = validate_field(mesh, 'type', required=True)
+        marker_obj.header.frame_id = mesh['frame_id']
+        marker_obj.ns = mesh['shape_name']
+        marker_obj.type = getattr(Marker(), mesh['type'])
+
+        mesh['details']= validate_field(mesh, 'details', required=True)
+
+        mesh['details']['position'] = validate_field(mesh['details'], 'position', default=dict())
+        mesh['details']['position']['x'] = validate_field(mesh['details']['position'], 'x', default=0)
+        mesh['details']['position']['y'] = validate_field(mesh['details']['position'], 'y', default=0)
+        mesh['details']['position']['z'] = validate_field(mesh['details']['position'], 'z', default=0)
+        marker_obj.pose.position = Point(**mesh['details']['position'])
+
+        mesh['details']['orientation'] = validate_field(mesh['details'], 'orientation', default=dict())
+        mesh['details']['orientation']['x'] = validate_field(mesh['details']['orientation'], 'x', default=0)
+        mesh['details']['orientation']['y'] = validate_field(mesh['details']['orientation'], 'y', default=0)
+        mesh['details']['orientation']['z'] = validate_field(mesh['details']['orientation'], 'z', default=0)
+        mesh['details']['orientation']['w'] = validate_field(mesh['details']['orientation'], 'w', default=0)
+        marker_obj.pose.orientation = Quaternion(**mesh['details']['orientation']) #TODO: this doesnt work yet
+        
+        mesh['details']['scale'] = validate_field(mesh['details'], 'scale', default=dict())
+        mesh['details']['scale']['x'] = validate_field(mesh['details']['scale'], 'x', default=0)
+        mesh['details']['scale']['y'] = validate_field(mesh['details']['scale'], 'y', default=0)
+        mesh['details']['scale']['z'] = validate_field(mesh['details']['scale'], 'z', default=0)
+        marker_obj.scale = Vector3(**mesh['details']['scale'])
+
+        mesh['details']['color'] = validate_field(mesh['details'], 'color', default=dict())
+        mesh['details']['color']['r'] = validate_field(mesh['details']['color'], 'r', default=0)
+        mesh['details']['color']['b'] = validate_field(mesh['details']['color'], 'b', default=0)
+        mesh['details']['color']['g'] = validate_field(mesh['details']['color'], 'g', default=0)
+        mesh['details']['color']['a'] = validate_field(mesh['details']['color'], 'a', default=0)
+        marker_obj.color = ColorRGBA(**mesh['details']['color'])
+
+        system_config_obj.mesh_list.append(marker_obj)
 
 
     pprint(system_config_obj)
 
-    pub = rospy.Publisher('/vrviz/config', SystemConfig, latch=True, queue_size=5)
-    pub.publish(system_config_obj)
+    pub = rospy.Publisher('/vrviz/config', SystemConfig, queue_size=5)
+
+    while not rospy.is_shutdown():
+        if pub.get_num_connections() > 0:
+            rospy.sleep(5.0)
+            pub.publish(system_config_obj)
+            break
+            
     rospy.spin()

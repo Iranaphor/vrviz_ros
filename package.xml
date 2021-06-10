@@ -11,7 +11,7 @@
   <!-- One license tag required, multiple allowed, one license per tag -->
   <!-- Commonly used license strings: -->
   <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>CC BY-NC 3.0</license>
+  <license>TODO</license>
 
 
   <!-- Url tags are optional, but multiple are allowed, one per tag -->
@@ -38,8 +38,11 @@
   <depend>mqtt_bridge</depend>
   <depend>rospy</depend>
   <depend>std_msgs</depend>
+  <depend>tf2_ros</depend>
   <depend>topic_tools</depend>
   <depend>turtlebot_gazebo</depend>
+  <depend>visualization_msgs</depend>
+
 
   <!-- Use buildtool_depend for build tool packages: -->
   <buildtool_depend>catkin</buildtool_depend>

@@ -49,16 +49,18 @@ topic_list:
 #     component: "UnityEngine.Transform, UnityEngine.CoreModule"
 #     modifier: "SetOdom"
 #   mqtt:
-#     frequency: 20 
+#     frequency: 20
+
+
 # - topic: "/camera/rgb/image_raw"
 #   msg_type: "sensor_msgs/Image"
 #   unity:
-#     namespace: "Simulation/Table/OverheadDisplay/Display_1"
-#     target_frame: "ImagePanel"
-#     component: "UnityEngine.UI.RawImage, UnityEngine.UI"
-#     modifier: "SetImage"
+#     type: "frame"
+#     target_frame: "Display_3_panel"
+#     component: "UnityEngine.Renderer, UnityEngine.CoreModule"
+#     modifier: "SetImageMaterial"
 #   mqtt:
-#     frequency: 0.1
+#     frequency: 1
 
 
 # ## TOPIC MODIFIES A FRAME CHILD OBJECT

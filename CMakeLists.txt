@@ -12,7 +12,9 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   rospy
   std_msgs
+  tf2_ros
   topic_tools
+  visualization_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -51,7 +53,6 @@ catkin_python_setup()
 ## Generate messages in the 'msg' folder
 add_message_files(
   FILES
-  FrameTransform.msg
   MqttParameters.msg
   SystemConfig.msg
   Topic.msg
@@ -79,7 +80,7 @@ add_message_files(
 # )
 
 generate_messages(
-  DEPENDENCIES std_msgs geometry_msgs
+  DEPENDENCIES std_msgs geometry_msgs visualization_msgs
 )
 
 ################################################
@@ -114,7 +115,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES vrviz
-  CATKIN_DEPENDS std_msgs message_runtime
+  CATKIN_DEPENDS std_msgs message_runtime geometry_msgs visualization_msgs
 #  DEPENDS system_lib
 )
 
