@@ -7,11 +7,11 @@ export VRVIZ_ROS_GIT_DIR=`file_dir`
 export VRVIZ_ROS_WS_DIR=`ws_dir`
 
 export ROS_MASTER=127.0.0.1
-export S_PORT=11412
-export C_PORT=11311
+export S_PORT=8067 #PC
+export C_PORT=8682 #VR
 
 export MQTT_BRIDGE_IP=localhost
-export MQTT_BRIDGE_PORT=8883
+export MQTT_BRIDGE_PORT=7781 #MQ
 
 
 function vrviz_server () {
@@ -36,7 +36,7 @@ function vrviz_remote () {
 }
 
 
-function vcd () { roscd vrviz_ros }
+function vcd () { roscd vrviz_ros ; }
 function vbasic () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
 
 function vsim () {           tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml relaunch ; }
