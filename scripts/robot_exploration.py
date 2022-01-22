@@ -20,23 +20,23 @@ def format_goal_obj(pos):
 
 def get_next_goal():
     goal_list.append(goal_list.pop(0))
-    rospy.logerr("Identified next goal: (%s,%s)" % (goal_list[0][0], goal_list[0][1]))
+    rospy.logwarn("Identified next goal: (%s,%s)" % (goal_list[0][0], goal_list[0][1]))
     return goal_list[0]
 
 
 if __name__ == '__main__':
     rospy.sleep(5)
-    rospy.init_node('vrviz_test_navigation')
+    rospy.init_node('vrviz_test_navigation', log_level=rospy.get_param('/vrviz_test_navigation/log_level', 2))
 
-    rospy.logerr("Initialising Client")
+    rospy.loginfo("Initialising Client")
     client = actionlib.SimpleActionClient("move_base", MoveBaseAction)
     rospy.sleep(1)  # TODO: find out if there is an actual function for this
 
     def move_complete(status, _):
-        rospy.logerr("Status: %s" % status)
+        rospy.logdebug("Status: %s" % status)
         client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
 
-    rospy.logerr("Sending Initial Goal")
+    rospy.loginfo("Sending Initial Goal")
     client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
 
     rospy.spin()

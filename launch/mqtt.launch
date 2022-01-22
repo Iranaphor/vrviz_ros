@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <launch>
-  <arg name="debug_level" default="debug"/>
+  <arg name="log_level" default="1"/>
 
 
   <!-- run communication manager & initialise channels -->
@@ -10,17 +10,18 @@
   <arg name="mqtt_config_file" default="$(find vrviz_ros)/config/mqtt_dynamic_bridge_server_config.yaml"/>
 
   <node pkg="mqtt_bridge" name="mqtt_bridge" type="mqtt_bridge_node.py" output="screen" respawn="true">
-        <rosparam command="load" subst_value="true" file="$(arg mqtt_config_file)"/>
-        <param name="mqtt_debug_option" value="$(arg debug_level)" type="string"/>
+        <rosparam command="load"      subst_value="true"          file="$(arg mqtt_config_file)"/>
+        <param name="log_level"       value="$(arg log_level)"    type="int"/>
   </node>
 
   <!-- Topics configuration location -->
   <arg name="topic_config" default="$(find vrviz_ros)/config/default_system_config.yaml"/>
   <arg name="mesh_config"  default="$(find vrviz_ros)/config/turtlebot_mesh_config.yaml"/>
 
-  <node pkg="vrviz_ros" name="config_publisher" type="publish_config.py" args="$(arg debug_level)" output="screen">
+  <node pkg="vrviz_ros" name="config_publisher" type="publish_config.py" output="screen">
         <param name="topic_config"    value="$(arg topic_config)" type="string"/>
         <param name="mesh_config"     value="$(arg mesh_config)"  type="string"/>
+        <param name="log_level"       value="$(arg log_level)"    type="int"/>
   </node>
 
   <!-- open connection for external access -->

@@ -3,7 +3,7 @@ import sys
 from typing import no_type_check_decorator
 import rospy
 import yaml
-from pprint import pprint
+from pprint import pprint, pformat
 from tf2_ros.buffer import Buffer
 
 from vrviz_ros.msg import SystemConfig, Topic, UnityModifier, MqttParameters
@@ -54,14 +54,7 @@ def validate_field(field_container, field_id, default="", required=False):
 
 
 if __name__ == '__main__':
-
-    debug_level = sys.argv[1] if (len(sys.argv) > 1) else None
-
-    if debug_level == 'debug':
-        rospy.init_node('vrviz_config_publisher', anonymous=False, log_level=rospy.DEBUG) #TODO: simplify this conditional
-    else:
-        rospy.init_node('vrviz_config_publisher', anonymous=False)
-
+    rospy.init_node('vrviz_config_publisher', anonymous=False, log_level=rospy.get_param("/config_publisher/log_level",2))
 
     print(rospy.get_param("~topic_config", "1"))
     print(rospy.get_param("~mesh_config", "2"))
@@ -72,6 +65,8 @@ if __name__ == '__main__':
 
 
     rospy.sleep(1)
+
+    pub = rospy.Publisher('/vrviz/config', SystemConfig, queue_size=5, latch=True)
 
     system_config_obj = SystemConfig()
     system_config_obj.topic_list = []
@@ -146,15 +141,16 @@ if __name__ == '__main__':
 
         system_config_obj.mesh_list.append(marker_obj)
 
+    rospy.logdebug(system_config_obj)
+    rospy.logdebug(pformat(system_config_obj, width=1))
 
-    pprint(system_config_obj)
+    # while not rospy.is_shutdown():
+    #     if pub.get_num_connections() > 0:
+    #         rospy.sleep(5.0)
+    #         pub.publish(system_config_obj)
+    #         break
 
-    pub = rospy.Publisher('/vrviz/config', SystemConfig, queue_size=5)
+    pub.publish(system_config_obj)
+    rospy.loginfo("Config published")
 
-    while not rospy.is_shutdown():
-        if pub.get_num_connections() > 0:
-            rospy.sleep(5.0)
-            pub.publish(system_config_obj)
-            break
-            
     rospy.spin()

@@ -1,4 +1,5 @@
-echo "    - VRViz-ROS .vrvizrc" | awk '{ gsub("VRViz-ROS",  "\033[1;33m&\033[0m"); print }' ;
+echo "    - Sourced: \$vrviz_ros/.runcom" | awk '{ gsub("\$vrviz_ros", "\033[1;33m&\033[0m"); print }' ;
+export vrviz_ros=$(dirname "${BASH_SOURCE[0]}")
 
 function file_dir () { echo "$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )" ; }
 function ws_dir () { echo `file_dir` | awk -F'/src' '{print $1}' ; }
@@ -18,30 +19,46 @@ function vrviz_server () {
   export PORT=${S_PORT}
   export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
   export ROS_IP=$ROS_MASTER
-  echo "Terminal connected to vrviz_server on $ROS_IP";
+  echo "Terminal connected to vrviz_server on $ROS_MASTER_URI";
 }
 
 function vrviz_client () {
   export PORT=${C_PORT}
   export ROS_MASTER_URI=http://${ROS_MASTER}:${PORT}
   export ROS_IP=$ROS_MASTER
-  echo "Terminal connected to vrviz_client on $ROS_IP"
+  echo "Terminal connected to vrviz_client on $ROS_MASTER_URI"
 }
 
 function vrviz_remote () {
   export PORT=${MQTT_BRIDGE_PORT}
   export ROS_MASTER_URI=http://${MQTT_BRIDGE_IP}:${MQTT_BRIDGE_PORT}
   export ROS_IP=$ROS_MASTER
-  echo "Terminal connected to vrviz_remote on $ROS_IP"
+  echo "Terminal connected to vrviz_remote on $ROS_MASTER_URI"
 }
 
-
 function vcd () { roscd vrviz_ros ; }
-function vbasic () { vrviz_server; roslaunch vrviz_ros basic_test_simulation.launch ; }
+function vrv () {
+    high=12
+    rows=$(stty size | cut -d' ' -f1)
+    [ -z "$rows" ] && rows=$high
+    [ $rows -gt $high ] && rows=$high
+    cols=$(stty size | cut -d' ' -f2)
+    export T="Select TMuLE Action"
+    ans1="basic_sim.yaml"
 
-function vsim () {           tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml relaunch ; }
-function vsim_launch () {    tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml launch ; }
-function vsim_terminate () { tmule -c $(rospack find vrviz_ros)/tmule/basic_sim.yaml terminate ; }
+    export N=$(echo "relaunch" Re-Launch "launch" Launch "stop" Stop "terminate" Terminate)
+    ans2=$(whiptail --title "$T" --menu "Do what with $ans1?" --notags $rows $((cols - 5)) 5 3>&1 1>&2 2>&3 $N)
+    if [ -z "$ans2" ] ; then
+        whiptail --title "$T" --msgbox "No Action Selected" $rows $((cols - 5)) 3>&1 1>&2 2>&3
+        return
+    fi
+
+    tmule -c $(rospack find vrviz_ros)/tmule/$ans1 $ans2
+
+    if [ $ans2 == "launch" ]; then tmux a
+    elif [ $ans2 == "relaunch" ]; then tmux a
+    fi
+}
 
 function rebuild() {
 	cd $VRVIZ_ROS_WS_DIR

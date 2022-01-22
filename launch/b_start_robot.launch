@@ -1,4 +1,0 @@
-<?xml version="1.0" ?>
-<launch>
-  <node pkg="vrviz_ros" name="vrviz_test_navigation" type="b_navigate_robot.py" output="screen"/>
-</launch>

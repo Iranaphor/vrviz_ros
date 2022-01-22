@@ -3,11 +3,21 @@ session: vrviz_basic_sim
 init_cmd: |
   #exec /bin/bash
   source ~/bashrc
-  
+  vrviz_server
+
 windows:
-- name: basic
+
+- name: gazebo
   panes:
-  - sleep 00 ; vrviz_server ; roslaunch vrviz_ros basic_test_simulation.launch
-  - sleep 10 ; vrviz_server ; roslaunch vrviz_ros mqtt.launch
-  - sleep 10 ; vrviz_server ; roslaunch vrviz_ros b_start_robot.launch
-  - sleep 05 ; vrviz_server ; rostopic echo /vrviz/config
+  - roslaunch vrviz_ros turtlebot_sim.launch
+  - gzclient
+  - rviz
+  check: "rostopic list | grep -q odom"
+
+- name: mqtt
+  panes:
+  - roslaunch vrviz_ros mqtt.launch
+
+#- name: vr_config
+#  panes:
+#  - rostopic echo /vrviz/config
