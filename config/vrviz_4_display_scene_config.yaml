@@ -1,11 +1,13 @@
 displays:
   - visualization: Image
     topic: /camera/rgb/image_raw
-    display: 1
+    details:
+      display: 1
 #  - visualization: Image
 #    topic: /camera/depth/image_raw
-#    normalize_range: True
-#    display: 2
+#    details:
+#      normalize_range: True
+#      display: 2
 
   - visualization: Laserscan
     topic: /scan
