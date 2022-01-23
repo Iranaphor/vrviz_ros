@@ -1,16 +1,16 @@
 displays:
   - visualization: Image
-    topic: /camera/rgb/image_raw
+    reference: /camera/rgb/image_raw
     details:
       display: 1
 #  - visualization: Image
-#    topic: /camera/depth/image_raw
+#    reference: /camera/depth/image_raw
 #    details:
 #      normalize_range: True
 #      display: 2
 
   - visualization: Laserscan
-    topic: /scan
+    reference: /scan
     details:
       style: points
       size: 3
@@ -19,59 +19,59 @@ displays:
       flat_colour: 255,0,0
 
   - visualization: Map
-    topic: /map
+    reference: /map
     details:
       color_scheme: raw  # map, costmap, raw
 #  - visualization: Map
-#    topic: /move_base/global_costmap/costmap
+#    reference: /move_base/global_costmap/costmap
 #  - visualization: Map
-#    topic: /move_base/local_costmap/costmap
+#    reference: /move_base/local_costmap/costmap
 
   - visualization: Odometry
-    topic: /odom
+    reference: /odom
     details:
       shape: arrow  # arrow, axis
       #position_tolerance: 0.1 #0.001 for smooth
       #angule_tolerance: 0.1 #0.001 for smooth
 
   - visualization: Path
-    topic: /move_base/NavfnROS/plan
+    reference: /move_base/NavfnROS/plan
     details:
       flat_colour: 0,0,255
       alpha: 1
 #  - visualization: Path
-#    topic: /move_base/DWAPlannerROS/local_plan
+#    reference: /move_base/DWAPlannerROS/local_plan
 #  - visualization: Path
-#    topic: /move_base/DWAPlannerROS/global_plan
+#    reference: /move_base/DWAPlannerROS/global_plan
 
   - visualization: PointCloud2
-    topic: /camera/depth/points
+    reference: /camera/depth/points
     details:
       style: points  # points, squares, flat_squares, spheres, boxes
       size: 1
       alpha: 0.2
       decay_time: 0
 #  - visualization: PointCloud2
-#    topic: /move_base/DWAPlannerROS/trajectory_cloud
+#    reference: /move_base/DWAPlannerROS/trajectory_cloud
 #  - visualization: PointCloud2
-#    topic: /move_base/DWAPlannerROS/cost_cloud
+#    reference: /move_base/DWAPlannerROS/cost_cloud
 
 #  - visualization: Polygon
-#    topic: /move_base/global_costmap/footprint
+#    reference: /move_base/global_costmap/footprint
 #  - visualization: Polygon
-#    topic: /move_base/local_costmap/footprint
+#    reference: /move_base/local_costmap/footprint
 
   - visualization: Pose
-    topic: /move_base/current_goal
+    reference: /move_base/current_goal
     details:
       shape: arrow
       colour: 255,0,0
 
   - visualization: PoseArray
-    topic: /particle_cloud
+    reference: /particle_cloud
     details:
       shape: arrow_flat  # we should only need this one
       flat_colour: 255,0,0
 
   - visualization: RobotModel
-    topic: /robot_description #we use topic but really this is a param
+    reference: /robot_description #we use topic but really this is a param
