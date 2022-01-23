@@ -1,66 +1,75 @@
 displays:
-  1: /camera/depth/image_raw
-  2: /camera/rgb/image_raw
-  3: /camera/rgb/image_raw/compressed
-  4: /map
+  - visualization: Image
+    topic: /camera/rgb/image_raw
+    display: 1
+#  - visualization: Image
+#    topic: /camera/depth/image_raw
+#    normalize_range: True
+#    display: 2
 
-table_objects:
-  - category: RobotModel
-    param: /robot_description
-
-  - category: Laserscan
+  - visualization: Laserscan
     topic: /scan
-    style: points
-    size: 3
-    alpha: 1
-    decay_time: 10
-    flat_colour: 255,0,0
+    details:
+      style: points
+      size: 3
+      alpha: 1
+      decay_time: 10
+      flat_colour: 255,0,0
 
-  - category: Map
+  - visualization: Map
     topic: /map
-    color_scheme: raw  # map, costmap, raw
-#  - category: Map
+    details:
+      color_scheme: raw  # map, costmap, raw
+#  - visualization: Map
 #    topic: /move_base/global_costmap/costmap
-#  - category: Map
+#  - visualization: Map
 #    topic: /move_base/local_costmap/costmap
 
-  - category: Odometry
+  - visualization: Odometry
     topic: /odom
-    shape: arrow  # arrow, axis
-    #position_tolerance: 0.1 #0.001 for smooth
-    #angule_tolerance: 0.1 #0.001 for smooth
+    details:
+      shape: arrow  # arrow, axis
+      #position_tolerance: 0.1 #0.001 for smooth
+      #angule_tolerance: 0.1 #0.001 for smooth
 
-  - category: Path
+  - visualization: Path
     topic: /move_base/NavfnROS/plan
-    flat_colour: 0,0,255
-    alpha: 1
-#  - category: Path
+    details:
+      flat_colour: 0,0,255
+      alpha: 1
+#  - visualization: Path
 #    topic: /move_base/DWAPlannerROS/local_plan
-#  - category: Path
+#  - visualization: Path
 #    topic: /move_base/DWAPlannerROS/global_plan
 
-  - category: PointCloud2
+  - visualization: PointCloud2
     topic: /camera/depth/points
-    style: points  # points, squares, flat_squares, spheres, boxes
-    size: 1
-    alpha: 0.2
-    decay_time: 0
-#  - category: PointCloud2
+    details:
+      style: points  # points, squares, flat_squares, spheres, boxes
+      size: 1
+      alpha: 0.2
+      decay_time: 0
+#  - visualization: PointCloud2
 #    topic: /move_base/DWAPlannerROS/trajectory_cloud
-#  - category: PointCloud2
+#  - visualization: PointCloud2
 #    topic: /move_base/DWAPlannerROS/cost_cloud
 
-#  - category: Polygon
+#  - visualization: Polygon
 #    topic: /move_base/global_costmap/footprint
-#  - category: Polygon
+#  - visualization: Polygon
 #    topic: /move_base/local_costmap/footprint
 
-  - category: Pose
+  - visualization: Pose
     topic: /move_base/current_goal
-    shape: arrow
-    colour: 255,0,0
+    details:
+      shape: arrow
+      colour: 255,0,0
 
-  - category: PoseArray
+  - visualization: PoseArray
     topic: /particle_cloud
-    shape: arrow_flat  # we should only need this one
-    flat_colour: 255,0,0
+    details:
+      shape: arrow_flat  # we should only need this one
+      flat_colour: 255,0,0
+
+  - visualization: RobotModel
+    topic: /robot_description #we use topic but really this is a param

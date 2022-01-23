@@ -3,16 +3,19 @@ session: vrviz_basic_sim
 init_cmd: |
   #exec /bin/bash
   source ~/bashrc
-  vrviz_server
+  vrviz_client
 
 windows:
+#- name: roscore
+#  panes:
+#  - roscore -p $PORT
 
 - name: gazebo
   panes:
   - roslaunch vrviz_ros turtlebot_sim.launch
-  - gzclient
-  - rviz
-  check: "rostopic list | grep -q odom"
+#  - sleep 5; gzclient
+#  - sleep 5; rviz
+#  check: "rostopic list | grep -q odom"
 
 - name: mqtt
   panes:
