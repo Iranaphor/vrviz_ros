@@ -3,7 +3,7 @@ session: vrviz_basic_sim
 init_cmd: |
   #exec /bin/bash
   source ~/bashrc
-  vrviz_client
+  #vrviz_client
 
 windows:
 #- name: roscore
@@ -12,15 +12,14 @@ windows:
 
 - name: gazebo
   panes:
-  - roslaunch vrviz_ros turtlebot_sim.launch
-#  - sleep 5; gzclient
-#  - sleep 5; rviz
-#  check: "rostopic list | grep -q odom"
+  - vrviz_server; roslaunch vrviz_ros turtlebot_sim.launch
+  check: "rostopic list | grep -q /move_base/goal"
 
 - name: mqtt
   panes:
-  - roslaunch vrviz_ros mqtt.launch
+  - vrviz_server; roslaunch vrviz_ros mqtt.launch
+  check: "rostopic list | grep -q /vrviz/config"
 
-#- name: vr_config
-#  panes:
-#  - rostopic echo /vrviz/config
+- name: rviz
+  panes:
+    - vrviz_server; rviz -d $(rospack find vrviz_ros)/resources/turtlebot_vis.rviz

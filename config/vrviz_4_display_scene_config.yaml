@@ -1,17 +1,17 @@
 displays:
   - visualization: Image
     reference: /camera/rgb/image_raw
-    details:
+    topic_details:
+      frequency: 1
+    display_details:
       display: 1
+      normalize_range: True
 #  - visualization: Image
 #    reference: /camera/depth/image_raw
-#    details:
-#      normalize_range: True
-#      display: 2
 
   - visualization: Laserscan
     reference: /scan
-    details:
+    display_details:
       style: points
       size: 3
       alpha: 1
@@ -20,7 +20,7 @@ displays:
 
   - visualization: Map
     reference: /map
-    details:
+    display_details:
       color_scheme: raw  # map, costmap, raw
 #  - visualization: Map
 #    reference: /move_base/global_costmap/costmap
@@ -29,14 +29,16 @@ displays:
 
   - visualization: Odometry
     reference: /odom
-    details:
+    display_details:
       shape: arrow  # arrow, axis
       #position_tolerance: 0.1 #0.001 for smooth
       #angule_tolerance: 0.1 #0.001 for smooth
 
   - visualization: Path
     reference: /move_base/NavfnROS/plan
-    details:
+    mqtt_details:
+      latched: true
+    display_details:
       flat_colour: 0,0,255
       alpha: 1
 #  - visualization: Path
@@ -46,7 +48,7 @@ displays:
 
   - visualization: PointCloud2
     reference: /camera/depth/points
-    details:
+    display_details:
       style: points  # points, squares, flat_squares, spheres, boxes
       size: 1
       alpha: 0.2
@@ -63,13 +65,15 @@ displays:
 
   - visualization: Pose
     reference: /move_base/current_goal
-    details:
+    mqtt_details:
+      latched: true
+    display_details:
       shape: arrow
       colour: 255,0,0
 
   - visualization: PoseArray
     reference: /particle_cloud
-    details:
+    display_details:
       shape: arrow_flat  # we should only need this one
       flat_colour: 255,0,0
 
