@@ -16,27 +16,3 @@ bridge:
 # and the SubscribeBridge from the respective remote sides
   - factory: mqtt_bridge.bridge:DynamicBridgeServer
     control_topic: '$(arg control_topic)'
-
-#  - factory: mqtt_bridge.bridge:PublishBridge
-#    control_topic: '$(arg control_topic)'
-#    msg_type: 'nav_msgs.msg:Odometry'
-#    topic_from: '/odom' #local topic identifier
-#    topic_to: 'm2/odom' #remote topic identifier
-#    latched: false
-#    qos: 0
-
-#  - factory: mqtt_bridge.bridge:SubscribeBridge
-#    control_topic: '$(arg control_topic)'
-#    msg_type: 'std_msgs.msg:String'
-#    topic_from: '/test' #local topic identifier
-#    topic_to: 'm2/test' #remote topic identifier
-#    latched: false
-#    qos: 0
-
-  #  - factory: mqtt_bridge.bridge:SubscribeBridge
-  #    control_topic: '$(arg control_topic)'
-  #    msg_type: 'std_msgs.msg:String'
-  #    topic_from: 'm2/test' #local topic identifier
-  #    topic_to: '/test' #remote topic identifier
-  #    latched: false
-  #    qos: 0

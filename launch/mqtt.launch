@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <launch>
-  <arg name="log_level" default="1"/>
+  <arg name="log_level" default="2"/>
 
 
   <!-- run communication manager & initialise channels -->
@@ -9,19 +9,34 @@
   <arg name="mqtt_bridge_port" default="$(optenv MQTT_BRIDGE_PORT 8883)" doc="port of bridge (set in .runcom)"/>
   <arg name="mqtt_config_file" default="$(find vrviz_ros)/config/mqtt_dynamic_bridge_server_config.yaml"/>
 
+  <arg name="web_server_port" default="$(optenv WEB_SERVER_PORT 8080)" doc="standard port for webserver (set in .runcom)"/>
+  <arg name="web_server_config" default="$(optenv WEB_SERVER_CONFIG ../config)" doc="standard location for webserver configs(set in .runcom)"/>
+
   <node pkg="mqtt_bridge" name="mqtt_bridge" type="mqtt_bridge_node.py" output="screen" respawn="true">
         <rosparam command="load"      subst_value="true"          file="$(arg mqtt_config_file)"/>
         <param name="log_level"       value="$(arg log_level)"    type="int"/>
   </node>
 
   <!-- Topics configuration location -->
-  <arg name="topic_config" default="$(find vrviz_ros)/config/default_system_config.yaml"/>
-  <arg name="mesh_config"  default="$(find vrviz_ros)/config/turtlebot_mesh_config.yaml"/>
+<!--  <arg name="topic_config" default="$(find vrviz_ros)/config/default_system_config.yaml"/>-->
+<!--  <arg name="mesh_config"  default="$(find vrviz_ros)/config/turtlebot_mesh_config.yaml"/>-->
 
-  <node pkg="vrviz_ros" name="config_publisher" type="publish_config.py" output="screen">
-        <param name="topic_config"    value="$(arg topic_config)" type="string"/>
-        <param name="mesh_config"     value="$(arg mesh_config)"  type="string"/>
-        <param name="log_level"       value="$(arg log_level)"    type="int"/>
+<!--  <node pkg="vrviz_ros" name="config_publisher" type="publish_config.py" output="screen">-->
+<!--        <param name="topic_config"    value="$(arg topic_config)" type="string"/>-->
+<!--        <param name="mesh_config"     value="$(arg mesh_config)"  type="string"/>-->
+<!--        <param name="log_level"       value="$(arg log_level)"    type="int"/>-->
+<!--  </node>-->
+
+
+  <!-- Topics configuration location -->
+  <node pkg="vrviz_ros" name="client_connection_finder" type="broadcast.py" output="screen">
+        <param name="mqtt_port" value="$(arg mqtt_bridge_port)" type="int"/>
+        <param name="web_server_port" value="$(arg web_server_port)" type="int"/>
+  </node>
+
+  <node pkg="vrviz_ros" name="webserver" type="web_server.py" output="screen">
+        <param name="web_server_port" value="$(arg web_server_port)" type="int"/>
+        <param name="web_server_config" value="$(arg web_server_config)" type="string"/>
   </node>
 
   <!-- open connection for external access -->

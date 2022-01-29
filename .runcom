@@ -14,6 +14,9 @@ export C_PORT=8682 #VR
 export MQTT_BRIDGE_IP=localhost
 export MQTT_BRIDGE_PORT=7781 #MQ
 
+export WEB_SERVER_PORT=8080 #WS
+export WEB_SERVER_CONFIG="../config"#WS
+
 
 function vrviz_server () {
   export PORT=${S_PORT}
