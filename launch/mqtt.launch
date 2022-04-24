@@ -18,17 +18,6 @@
   </node>
 
   <!-- Topics configuration location -->
-<!--  <arg name="topic_config" default="$(find vrviz_ros)/config/default_system_config.yaml"/>-->
-<!--  <arg name="mesh_config"  default="$(find vrviz_ros)/config/turtlebot_mesh_config.yaml"/>-->
-
-<!--  <node pkg="vrviz_ros" name="config_publisher" type="publish_config.py" output="screen">-->
-<!--        <param name="topic_config"    value="$(arg topic_config)" type="string"/>-->
-<!--        <param name="mesh_config"     value="$(arg mesh_config)"  type="string"/>-->
-<!--        <param name="log_level"       value="$(arg log_level)"    type="int"/>-->
-<!--  </node>-->
-
-
-  <!-- Topics configuration location -->
   <node pkg="vrviz_ros" name="client_connection_finder" type="broadcast.py" output="screen">
         <param name="mqtt_port" value="$(arg mqtt_bridge_port)" type="int"/>
         <param name="web_server_port" value="$(arg web_server_port)" type="int"/>

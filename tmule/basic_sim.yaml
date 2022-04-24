@@ -18,7 +18,7 @@ windows:
 - name: mqtt
   panes:
   - vrviz_server; roslaunch vrviz_ros mqtt.launch
-  check: "rostopic list | grep -q /vrviz/config"
+  check: "rosnode list | grep -q /mqtt_bridge"
 
 - name: rviz
   panes:

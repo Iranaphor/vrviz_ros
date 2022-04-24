@@ -1,50 +1,20 @@
 displays:
-  - visualization: Image
-    reference: /camera/rgb/image_raw
-    topic_details:
-      frequency: 1
-    display_details:
-      display: 1
-      normalize_range: True
 #  - visualization: Image
-#    reference: /camera/depth/image_raw
-
-  - visualization: Laserscan
-    reference: /scan
-    display_details:
-      style: points
-      size: 3
-      alpha: 1
-      decay_time: 10
-      flat_colour: 255,0,0
-
-  - visualization: Map
-    reference: /map
-    display_details:
-      color_scheme: raw  # map, costmap, raw
-#  - visualization: Map
-#    reference: /move_base/global_costmap/costmap
-#  - visualization: Map
-#    reference: /move_base/local_costmap/costmap
+#    reference: /camera/rgb/image_raw
+#    topic_details:
+#      frequency: 1
+#    display_details:
+#      display: 1
+#      normalize_range: True
 
   - visualization: Odometry
     reference: /odom
+    topic_details:
+      frequency: 10
     display_details:
       shape: arrow  # arrow, axis
-      #position_tolerance: 0.1 #0.001 for smooth
-      #angule_tolerance: 0.1 #0.001 for smooth
-
-  - visualization: Path
-    reference: /move_base/NavfnROS/plan
-    topic_details:
-      latched: true
-    display_details:
-      flat_colour: 0,0,255
-      alpha: 1
-#  - visualization: Path
-#    reference: /move_base/DWAPlannerROS/local_plan
-#  - visualization: Path
-#    reference: /move_base/DWAPlannerROS/global_plan
+      position_tolerance: 0.1 #0.001 for smooth
+      angule_tolerance: 0.1 #0.001 for smooth
 
   - visualization: PointCloud2
     reference: /camera/depth/points
@@ -53,6 +23,45 @@ displays:
       size: 1
       alpha: 0.2
       decay_time: 0
+
+#  - visualization: Image
+#    reference: /camera/depth/image_raw
+
+#  - visualization: PoseWithCovarianceStamped
+#    reference: /amcl_pose
+#    topic_details:
+#      frequency: 100
+
+#  - visualization: Laserscan
+#    reference: /scan
+#    display_details:
+#      style: points
+#      size: 3
+#      alpha: 1
+#      decay_time: 10
+#      flat_colour: 255,0,0
+
+#  - visualization: Map
+#    reference: /map
+#    display_details:
+#      color_scheme: raw  # map, costmap, raw
+#  - visualization: Map
+#    reference: /move_base/global_costmap/costmap
+#  - visualization: Map
+#    reference: /move_base/local_costmap/costmap
+
+#  - visualization: Path
+#    reference: /move_base/NavfnROS/plan
+#    topic_details:
+#      latched: true
+#    display_details:
+#      flat_colour: 0,0,255
+#      alpha: 1
+#  - visualization: Path
+#    reference: /move_base/DWAPlannerROS/local_plan
+#  - visualization: Path
+#    reference: /move_base/DWAPlannerROS/global_plan
+
 #  - visualization: PointCloud2
 #    reference: /move_base/DWAPlannerROS/trajectory_cloud
 #  - visualization: PointCloud2
@@ -63,19 +72,20 @@ displays:
 #  - visualization: Polygon
 #    reference: /move_base/local_costmap/footprint
 
-  - visualization: Pose
-    reference: /move_base/current_goal
-    topic_details:
-      latched: true
-    display_details:
-      shape: arrow
-      colour: 255,0,0
+#  - visualization: Pose
+#    reference: /move_base/current_goal
+#    topic_details:
+#      latched: true
+#      frequency: 1
+#    display_details:
+#      shape: arrow
+#      colour: 255,0,0
 
-  - visualization: PoseArray
-    reference: /particle_cloud
-    display_details:
-      shape: arrow_flat  # we should only need this one
-      flat_colour: 255,0,0
+#  - visualization: PoseArray
+#    reference: /particlecloud
+#    display_details:
+#      shape: arrow_flat  # we should only need this one
+#      flat_colour: 255,0,0
 
-  - visualization: RobotModel
-    reference: /robot_description #we use topic but really this is a param
+#  - visualization: RobotModel
+#    reference: /robot_description #we use topic but really this is a param

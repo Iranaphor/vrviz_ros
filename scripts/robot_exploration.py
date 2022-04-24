@@ -4,7 +4,7 @@ import rospy
 import actionlib
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 
-goal_list = [(-1,3), (0, 1), (4.5, -2), (1, 0), (2, -4), (-1, -1), (0, -1), (-1, 0)]
+goal_list = [(-1,3), (0, 1), (3.5, -2), (1, 0), (2, -4), (-1, -1), (0, -1), (-1, 0)]
 # goal_list = [(0, 1), (1, 0), (0, -1), (-1, 0)]
 
 
@@ -34,6 +34,7 @@ if __name__ == '__main__':
 
     def move_complete(status, _):
         rospy.logdebug("Status: %s" % status)
+        rospy.sleep(5)
         client.send_goal(format_goal_obj(get_next_goal()), done_cb=move_complete)
 
     rospy.loginfo("Sending Initial Goal")
