@@ -2,7 +2,7 @@
 session: vrviz_basic_sim
 init_cmd: |
   #exec /bin/bash
-  source ~/bashrc
+  source ~/.bashrc
   #vrviz_client
 
 windows:
@@ -23,3 +23,4 @@ windows:
 - name: rviz
   panes:
     - vrviz_server; rviz -d $(rospack find vrviz_ros)/resources/turtlebot_vis.rviz
+
