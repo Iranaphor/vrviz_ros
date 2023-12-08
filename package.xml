@@ -1,56 +1,28 @@
 <?xml version="1.0"?>
-<package format="2">
-  <name>vrviz_ros</name>
-  <version>0.1.0</version>
-  <description>The VRViz package</description>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>vrviz</name>
+  <version>0.0.1</version>
+  <description>The vrviz ros package</description>
 
-  <!-- One maintainer tag required, multiple allowed, one person per tag -->
-  <maintainer email="jheselden+vrviz_ros@lincoln.ac.uk">James Heselden</maintainer>
+  <maintainer email="primordia@live.com">james</maintainer>
+  <license>TODO: License declaration</license>
 
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
 
-  <!-- One license tag required, multiple allowed, one license per tag -->
-  <!-- Commonly used license strings: -->
-  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
-  <license>TODO</license>
+  <depend>mosquitto</depend>
+  <depend>python3-paho-mqtt</depend>
+  <depend>python3-msgpack</depend>
 
-
-  <!-- Url tags are optional, but multiple are allowed, one per tag -->
-  <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <url type="repository">http://www.github.com/Iranaphor/VRViz_ROS</url>
-
-
-  <!-- Author tags are optional, multiple are allowed, one per tag -->
-  <!-- Authors do not have to be maintainers, but could be -->
-  <author email="jheselden+vrviz_ros@lincoln.ac.uk">James Heselden</author>
-  <author email="jastevenson+vrviz_ros@lincoln.ac.uk">Jack Stevenson</author>
-
-
-  <!-- The *depend tags are used to specify dependencies -->
-  <!-- Dependencies can be catkin packages or system dependencies -->
-
-  <!-- Use depend as a shortcut for packages that are both build, export and execute dependencies -->
-  <!-- More info can be found: http://wiki.ros.org/catkin/package.xml#Dependencies -->
-  <depend>actionlib</depend>
-  <depend>geometry_msgs</depend>
-  <depend>message_generation</depend>
-  <depend>message_runtime</depend>
-  <depend>move_base</depend>
-  <depend>mqtt_bridge</depend>
-  <depend>rospy</depend>
-  <depend>std_msgs</depend>
-  <depend>tf2_ros</depend>
-  <depend>topic_tools</depend>
-  <depend>turtlebot_gazebo</depend>
-  <depend>visualization_msgs</depend>
-
-
-  <!-- Use buildtool_depend for build tool packages: -->
-  <buildtool_depend>catkin</buildtool_depend>
-
-  <!-- Use test_depend for packages you need only for testing: -->
-  <!--   <test_depend>gtest</test_depend> -->
-
-  <!-- Use doc_depend for packages you need only for building documentation: -->
-  <!--   <doc_depend>doxygen</doc_depend> -->
-
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
 </package>
+
+
+
+
+

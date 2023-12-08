@@ -1,0 +1,33 @@
+---
+session: vrviz_basic_sim
+init_cmd: |
+  #exec /bin/bash
+  cd @TMULE_CONFIG_DIR@ || true
+  set -o pipefail
+
+  # get and source the details for the workspace from rasberryrc
+  source $WS_DIR/src/runcom.sh
+  export DISPLAY=:0
+
+  # Source the environment variables for the scenario
+  clear -x
+
+windows:
+- name: vrviz_broker
+  panes:
+  - [ $VRVIZ_MQTT_BROKER_IP != "mqtt.lcas.group" ] && ros2 run vrviz broker.sh
+  - ros2 run vrviz server.py
+
+- name: environment
+  panes:
+  - ros2 launch environment_common environment.launch.py
+  check: "ros2 topic echo /topomap_marker2/vis --once"
+
+- name: coordinator
+  panes:
+  - ros2 run rasberry_coordination_core coordinator.py $COORDINATOR_CONFIG
+
+- name: rviz
+  panes:
+  - rviz2 -d $RVIZ_CONFIG
+  - ros2 run rasberry_coordination_core agent_markers.py

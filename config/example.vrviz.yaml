@@ -1,3 +1,22 @@
+#Visualization Manager:
+#  Displays:
+#    - Class: rviz_default_plugins/MarkerArray
+#      Enabled: true
+#      Name: Topological Map
+#      Namespaces:
+#        /edges: true
+#        /legend: true
+#        /names: true
+#        /nodes: true
+#        /zones: false
+#      Topic:
+#        Depth: 5
+#        Durability Policy: Volatile
+#        History Policy: Keep Last
+#        Reliability Policy: Reliable
+#        Value: /topomap_marker2/vis
+#      Value: true
+
 displays:
 #  - visualization: Image
 #    reference: /camera/rgb/image_raw
