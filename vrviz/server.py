@@ -18,7 +18,7 @@ from rclpy.qos import QoSProfile, HistoryPolicy, ReliabilityPolicy, DurabilityPo
 # Msg handling
 import importlib
 from std_msgs.msg import String, Empty
-from ffr_utils.rosmsg import convert_ros_message_to_dictionary, get_rosmsg_obj
+from vrviz.rosmsg import convert_ros_message_to_dictionary, get_rosmsg_obj
 
 # Define topics to connect with
 class FarmConnector(Node):
@@ -31,6 +31,7 @@ class FarmConnector(Node):
         self.mqtt_ip = os.getenv('VRVIZ_MQTT_BROKER_IP')
         self.mqtt_port = int(os.getenv('VRVIZ_MQTT_BROKER_PORT'))
         self.mqtt_ns = os.getenv('VRVIZ_MQTT_BROKER_NAMESPACE')
+        print(f'Connecting as {self.name} to {self.mqtt_ip}:{self.mqtt_port} under namespace: {self.mqtt_ns}')
 
         # Acquire Config Files
         self.rviz_config = os.getenv('VRVIZ_TABLE_CONFIG')
@@ -58,7 +59,7 @@ class FarmConnector(Node):
             sleep(1)
             self.connect_to_mqtt()
             return
-        print('Connection established.')
+        print('Connection established.\n')
         self.mqtt_client.loop_start()
 
 
@@ -86,7 +87,15 @@ class FarmConnector(Node):
         self.config['Table']['Panels'] = []
         self.config['Table']['Window Geometry'] = []
         D = self.config['Table']['Visualization Manager']['Displays']
-        D = [d for d in D if d['Value'] == True and d['Topic']['Value'] != '/topomap_marker2/vis']
+
+        # Flatten Groups into a list of Dipslays (TODO: rework this to retain the heirarchy somehow)
+        from pprint import pprint
+        while any([d['Class'] == 'rviz_common/Group' for d in D]):
+            D = [d for d in D if d['Class'] != 'rviz_common/Group'] + \
+                sum([d['Displays'] for d in D if d['Class'] == 'rviz_common/Group'],[])
+
+        #
+        D = [d for d in D if d['Value'] == True]
         self.config['Table']['Visualization Manager']['Displays'] = D
 
         self.mqtt_client.publish('vrviz/META', json.dumps(self.config['Table']), retain=True)
@@ -112,7 +121,7 @@ class FarmConnector(Node):
 
             # Convert qos details to objects
             T = topic['Topic']
-            R = {'Reliable': ReliabilityPolicy.RELIABLE, }
+            R = {'Reliable': ReliabilityPolicy.RELIABLE, 'Best Effort': ReliabilityPolicy.BEST_EFFORT}
             H = {'Keep Last': HistoryPolicy.KEEP_LAST, 'Keep All': HistoryPolicy.KEEP_ALL}
             D = {'Volatile': DurabilityPolicy.VOLATILE, 'Transient Local': DurabilityPolicy.TRANSIENT_LOCAL}
 
@@ -137,11 +146,15 @@ class FarmConnector(Node):
             #    continue
             #else:
             #    msg_type = topics[0][1][0]
-            rviz_types = {'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
-                          'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
+            rviz_types = {#'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
+                          #'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
                           'rviz_default_plugins/Pose':'geometry_msgs/msg/PoseStamped',
                           'rviz_default_plugins/PointStamped':'geometry_msgs/msg/PointStamped',
                           'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'}
+            if topic['Class'] not in rviz_types:
+                print('| ERROR, topic message type not defined: '+topic['Class'])
+                continue
+
             module_name, class_name = rviz_types[topic['Class']].split('/msg/')
             rosmsg_type = getattr(importlib.import_module(module_name+".msg"), class_name)
             #print('|', topic['Class'])
