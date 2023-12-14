@@ -1,5 +1,5 @@
 ---
-session: vrviz_basic_sim
+session: vrviz
 init_cmd: |
   #exec /bin/bash
   cd @TMULE_CONFIG_DIR@ || true
@@ -15,8 +15,13 @@ init_cmd: |
 windows:
 - name: vrviz_broker
   panes:
-  - [ $VRVIZ_MQTT_BROKER_IP != "mqtt.lcas.group" ] && ros2 run vrviz broker.sh
+  - ros2 run vrviz broker.sh
   - ros2 run vrviz server.py
+
+- name: rviz
+  panes:
+  - rviz2 -d $VRVIZ_TABLE_CONFIG
+  - ros2 run rasberry_coordination_core agent_markers.py
 
 - name: environment
   panes:
@@ -27,7 +32,3 @@ windows:
   panes:
   - ros2 run rasberry_coordination_core coordinator.py $COORDINATOR_CONFIG
 
-- name: rviz
-  panes:
-  - rviz2 -d $RVIZ_CONFIG
-  - ros2 run rasberry_coordination_core agent_markers.py

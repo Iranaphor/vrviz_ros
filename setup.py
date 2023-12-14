@@ -10,7 +10,7 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (f'lib/{package_name}', [f'{package_name}/mosquitto_broker.sh']),
+        (f'lib/{package_name}', [f'{package_name}/broker.sh']),
         (f'share/{package_name}/config', [f'config/mosquitto.conf'])
     ],
     install_requires=['setuptools', 'paho-mqtt', 'msgpack', 'tmule==1.5.9'],
@@ -22,7 +22,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'mqtt_publisher.py = vrviz.mqtt_publisher:main'
+            'server.py = vrviz.server:main'
         ],
     },
 

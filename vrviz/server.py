@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import os
+import os, random
 import yaml
 from pprint import pprint
 from time import sleep
@@ -17,36 +17,41 @@ from rclpy.qos import QoSProfile, HistoryPolicy, ReliabilityPolicy, DurabilityPo
 
 # Msg handling
 import importlib
-from std_msgs.msg import String
+from std_msgs.msg import String, Empty
 from ffr_utils.rosmsg import convert_ros_message_to_dictionary, get_rosmsg_obj
 
 # Define topics to connect with
 class FarmConnector(Node):
     def __init__(self):
         """ Initialise Handler """
-        super().__init__('farm_connector')
-        self.source = 'field'
-        self.name = os.getenv('FIELD_NAME')
-        self.load_config()
+        super().__init__('mqtt_server')
+        self.name = os.getenv('VRVIZ_MQTT_CLIENT_NAME')
 
         # Define all the details for the MQTT broker
-        self.mqtt_ip = os.getenv('FARM_IP')
-        self.mqtt_port = int(os.getenv('FARM_MQTT_BROKER_PORT'))
+        self.mqtt_ip = os.getenv('VRVIZ_MQTT_BROKER_IP')
+        self.mqtt_port = int(os.getenv('VRVIZ_MQTT_BROKER_PORT'))
+        self.mqtt_ns = os.getenv('VRVIZ_MQTT_BROKER_NAMESPACE')
+
+        # Acquire Config Files
+        self.rviz_config = os.getenv('VRVIZ_TABLE_CONFIG')
+        self.config = dict()
+        self.load_config()
 
         # Initiate connections to ROS and MQTT
-        self.ros_publishers = dict()
-        self.ros_subscribers = dict()
         self.mqtt_subscribers = []
         self.connect_to_mqtt()
 
+        # Manual Intervention
+        self.subs = []
+        self.create_subscription(Empty, '/load_config', self.load_config, 10)
 
     def connect_to_mqtt(self):
         """ MQTT management functions """
-        self.mqtt_client = mqtt.Client('field_'+self.name)
+        self.mqtt_client = mqtt.Client(self.name)
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_message = self.on_message
         try:
-            print('Connecting to farm broker...')
+            print('Connecting to broker...')
             self.mqtt_client.connect(self.mqtt_ip, self.mqtt_port)
         except:
             print('Connection failed, attempting reconnect...')
@@ -57,174 +62,108 @@ class FarmConnector(Node):
         self.mqtt_client.loop_start()
 
 
+    def on_message(self, client, userdata, msg):
+        """ Event callback trigger when mqtt subscription recieves a message """
+        return
+
     def on_connect(self, client, userdata, flags, rc):
         """ Event callback trigger when mqtt establishes a connection """
-        pprint(self.config)
-        self.mqtt_client.subscribe('REFRESH_FIELDS')
-
-        topics_to_open = {k:v for k,v in self.config['TOPICS'].items() if v['target']=='field'}
-        for k,v in topics_to_open.items():
-            self.mqtt_client.subscribe(v['mqtt_namespace']+k)
-            self.mqtt_subscribers += [v['mqtt_namespace']+k]
-
         self.send_config()
 
-
-    def load_config(self):
+    def load_config(self, msg=None):
         """ Load the config file """
-        pkg = get_package_share_directory('ffr_field')
-        self.topic_config = pkg+'/config/farm_field_connections.yaml'
-        with open(self.topic_config, 'r') as f:
-            self.config = yaml.safe_load(f.read())
+        with open(self.rviz_config, 'r') as f:
+            self.config['Table'] = yaml.safe_load(f.read())
+        if msg != None:
+            self.send_config()
 
     def send_config(self):
         """ Update and publish config to mqtt """
         # Load and publish the config
-        self.load_config()
-        self.mqtt_client.publish('META', json.dumps(self.config))
-
-        # Attach default values to topic details
-        for topic in self.config['TOPICS'].values():
-            for default_key, default_value in self.config['GENERAL']['DEFAULTS'].items():
-                if default_key not in topic:
-                    topic[default_key] = default_value
-        #self.config['TOPICS']['new_field']['target_namespace'] = '/bob/'
+        self.config['Table']['Visualization Manager']['Displays'][0]['Alpha'] = random.random()
 
         # We have a new config potentially, so we should create any ros subscribers and publishers here now
-        for topic_name, topic_details in self.config['TOPICS'].items():
-            print('\n'*5)
-            print('|','NEW TOPIC')
-            print('|','name',topic_name)
-            print('|','source',topic_details['source'])
-            pprint(topic_details)
+        self.config['Table']['Panels'] = []
+        self.config['Table']['Window Geometry'] = []
+        D = self.config['Table']['Visualization Manager']['Displays']
+        D = [d for d in D if d['Value'] == True and d['Topic']['Value'] != '/topomap_marker2/vis']
+        self.config['Table']['Visualization Manager']['Displays'] = D
+
+        self.mqtt_client.publish('vrviz/META', json.dumps(self.config['Table']), retain=True)
+
+        for topic in self.config['Table']['Visualization Manager']['Displays']:
+
+            # Handle if Topic does not exist
+            if 'Topic' not in topic:
+                print('Display class (', topic['Class'], ') does not use a topic.')
+                continue
+
             print('')
+            print('Topic name:', topic['Topic']['Value'])
 
-            # If we are pubishing to the farm
-            if topic_details['source'] == 'field':
-
-                # Skip if already subscribed
-                rostopic = topic_details['source_namespace'] + topic_name
-                if rostopic in self.ros_subscribers.keys():
-                    print('|   | skipping, already subscribed: ' + str(self.ros_subscribers.keys()))
-                    continue
-
-                # Get the message type
-                module_name, class_name = topic_details['source_type_name'].split('/msg/')
-                rosmsg_type = get_rosmsg_obj(module_name, class_name)
-
-                # Create ros publisher and mqtt subscription
-                qos = QoSProfile(depth=10)
-                #if topic_details['source_latch']:
-                #    r = ReliabilityPolicy.RELIABLE
-                #    h = HistoryPolicy.KEEP_LAST
-                #    d = DurabilityPolicy.TRANSIENT_LOCAL
-                #    qos = QoSProfile(depth=10, reliability=r, history=h, durability=d)
-                self.ros_subscribers[rostopic] = self.create_subscription(rosmsg_type, rostopic, lambda msg, topic=rostopic: self.ros_cb(msg, topic), qos)
-                print('|   | creating rossub: ' + rostopic)
-
-            # If we are subscribing to the farm
-            if topic_details['target'] == 'field':
+            # Skip if display is disabled
+            if topic['Value'] == False:
+                print('|', 'disabled')
+                continue
+            if topic['Topic']['Value'] == '/topomap_marker2/vis':
+                print('|', 'topo disabled')
+                continue
 
 
-                # Skip rostopic if already publishing
-                rostopic = topic_details['target_namespace']+topic_name
-                if rostopic in self.ros_publishers.keys(): continue
+            # Convert qos details to objects
+            T = topic['Topic']
+            R = {'Reliable': ReliabilityPolicy.RELIABLE, }
+            H = {'Keep Last': HistoryPolicy.KEEP_LAST, 'Keep All': HistoryPolicy.KEEP_ALL}
+            D = {'Volatile': DurabilityPolicy.VOLATILE, 'Transient Local': DurabilityPolicy.TRANSIENT_LOCAL}
 
-                # Get the message type
-                module_name, class_name = topic_details['target_type_name'].split('/msg/')
-                rosmsg_type = getattr(importlib.import_module(module_name+".msg"), class_name)
+            # Define Topic Details
+            topic_name = T['Value']
+            depth = T['Depth'] if 'Depth' in T else 1
+            filter_size = T['Filter Size'] if 'Filter Size' in T else 1
+            r = R[T['Reliability Policy'] if 'Reliability Policy' in T else 'Reliable']
+            h = H[T['History Policy'] if 'History Policy' in T else 'Keep Last']
+            d = D[T['Durability Policy'] if 'Durability Policy' in T else 'Volatile']
 
-                # Create ros publisher and mqtt subscription
-                qos = QoSProfile(depth=10)
-                #if topic_details['target_latch']:
-                #    r = ReliabilityPolicy.RELIABLE
-                #    h = HistoryPolicy.KEEP_LAST
-                #    d = DurabilityPolicy.TRANSIENT_LOCAL
-                #    qos = QoSProfile(depth=10, reliability=r, history=h, durability=d)
-                print('|   | creating ros pub: ' + rostopic)
-                self.ros_publishers[rostopic] = self.create_publisher(rosmsg_type, rostopic, qos)
+            # Skip if already connected
+            if topic_name in self.subs:
+                print('|', 'already connected')
+                continue
+            self.subs += [topic_name]
 
-                print('|   | creating mqtt pub: ' + mqtttopic)
-                self.mqtt_client.subscribe(mqtttopic)
-                self.mqtt_subscribers += [mqtttopic]
+            # Get the message type
+            #topics = self.get_publishers_info_by_topic(topic_name)
+            #if len(topics) == 0:
+            #    print('Topic is not publishing, so idk what to do... we need a data type...')
+            #    continue
+            #else:
+            #    msg_type = topics[0][1][0]
+            rviz_types = {'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
+                          'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
+                          'rviz_default_plugins/Pose':'geometry_msgs/msg/PoseStamped',
+                          'rviz_default_plugins/PointStamped':'geometry_msgs/msg/PointStamped',
+                          'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'}
+            module_name, class_name = rviz_types[topic['Class']].split('/msg/')
+            rosmsg_type = getattr(importlib.import_module(module_name+".msg"), class_name)
+            #print('|', topic['Class'])
+            #print('|', rviz_types[topic['Class']])
 
-        # Remove publishers and subscribers no longer in use #TODO: doesnt work because of namespaces not being included
-        #print('\n'*2)
-        #print('Removing publisher and subscribers no longer in use')
-        #print(self.config['TOPICS'].keys())
-        #for pub in self.ros_publishers:
-        #    print('|  rospub', pub)
-        #    if pub not in self.config['TOPICS'].keys():
-        #        print('|    | deleting rospub (skipped for now)')
-        #        #del pub
-        #for sub in self.ros_subscribers:
-        #    print('|  rossub', sub)
-        #    if sub not in self.config['TOPICS'].keys():
-        #        print('|    | deleting rossub (skipping for now)')
-        #        #del sub
-        #for sub in self.mqtt_subscribers:
-        #    print('| mqttsub', sub)
-        #    if sub not in self.config['TOPICS'].keys():
-        #        print('|    | deleting mqttsub (skipping for now)')
-        #        #del sub
+            # Create ROS Subscriber
+            qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
+            self.create_subscription(rosmsg_type, topic_name, lambda msg, t=topic_name: self.ros_cb(msg, t), qos)
+            print('|', 'subscribed')
 
-        print('')
-        print('|','STATUS')
-        print('|','Subscriptions to ROS:')
-        print('|',', '.join(self.ros_subscribers.keys()) or '[]')
-        print('|')
-        print('|','Publishers to ROS:')
-        print('|',', '.join(self.ros_publishers.keys()) or '[]')
-        print('|')
-        print('|','Subscriptions to MQTT:')
-        print('|',', '.join(self.mqtt_subscribers) or '[]')
-        print('|')
-
-    def ros_cb(self, msg, rostopic):
+    def ros_cb(self, msg, topic):
         """ ROS Callback finction to service all ROS subscribers """
         print('')
-        print('|','ROS Message recieved: [' + rostopic + ']')
+        print('|','ROS Message recieved: [' + topic + ']')
 
-        # Remap the topic details to a source_namespace dictionary
-        source_topics = {v['source_namespace']+k:k for k,v in self.config['TOPICS'].items()}
-        topic_name = source_topics[rostopic]
-        topic = self.config['TOPICS'][topic_name]
-
-        # Convert message to correct format
-        if topic['broker_type_name'] == 'msgpack':
-            # Bytearray is only used with msgpack encoding
-            data = bytearray(msgpack.dumps(convert_ros_message_to_dictionary(msg)))
-        elif topic['broker_type_name'] == 'json':
-            data = json.dumps(convert_ros_message_to_dictionary(msg))
+        # Encode msg to JSON
+        data = json.dumps(convert_ros_message_to_dictionary(msg))
         print(data[:50]+'...' if len(data)>50 else data)
 
         # Publish msg to mqtt
-        mqtttopic = topic['broker_namespace']+topic_name
+        mqtttopic = self.mqtt_ns + topic
         self.mqtt_client.publish(mqtttopic, data, retain=False)
-        #self.mqtt_client.publish(mqtttopic, data, retain=topic['broker_latch'])
-
-    def on_message(self, client, userdata, msg):
-        """ Event callback trigger when mqtt subscription recieves a message """
-
-        # If farm requesting new config info from fields
-        if msg.topic == 'REFRESH_FIELDS':
-            print('|','MQTT Request to resend config.')
-            self.send_config()
-            return
-
-        # If message is one we are sending, skip
-        if msg.topic not in self.mqtt_subscribers:
-            return
-
-        # Event callback trigger when mqtt client recieves a message
-        print('')
-        print('|','MQTT Message received ['+msg.topic+']')
-
-        # Parse message to ROS
-        t = msg.topic
-        subs = [t['mqtt_namespace']+msg.topic for t in self.config['TOPICS'].values()]
-        if [t for t in self.config if msg.topic.endswith(t)]:
-            pass
 
 
 def main(args=None):
