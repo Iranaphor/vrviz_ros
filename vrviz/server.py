@@ -98,6 +98,20 @@ class FarmConnector(Node):
         D = [d for d in D if d['Value'] == True]
         self.config['Table']['Visualization Manager']['Displays'] = D
 
+        # Publish config for Table
+        rviz_types = {#'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
+                        #'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
+                        'rviz_default_plugins/Odometry':'nav_msgs/msg/Odometry',
+                        'rviz_default_plugins/Pose':'geometry_msgs/msg/PoseStamped',
+                        'rviz_default_plugins/PointStamped':'geometry_msgs/msg/PointStamped',
+                        'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'}
+        
+        # Filter classes which have not been implemented yet
+        self.config['Table']['Visualization Manager']['Displays'] = [
+                t for t in self.config['Table']['Visualization Manager']['Displays'] 
+                if t['Class'] in rviz_types.keys()
+        ]
+
         self.mqtt_client.publish('vrviz/META', json.dumps(self.config['Table']), retain=True)
 
         for topic in self.config['Table']['Visualization Manager']['Displays']:
@@ -146,11 +160,7 @@ class FarmConnector(Node):
             #    continue
             #else:
             #    msg_type = topics[0][1][0]
-            rviz_types = {#'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
-                          #'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
-                          'rviz_default_plugins/Pose':'geometry_msgs/msg/PoseStamped',
-                          'rviz_default_plugins/PointStamped':'geometry_msgs/msg/PointStamped',
-                          'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'}
+
             if topic['Class'] not in rviz_types:
                 print('| ERROR, topic message type not defined: '+topic['Class'])
                 continue
