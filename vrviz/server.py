@@ -32,9 +32,16 @@ class FarmConnector(Node):
         self.mqtt_port = int(os.getenv('VRVIZ_MQTT_BROKER_PORT'))
         self.mqtt_ns = os.getenv('VRVIZ_MQTT_BROKER_NAMESPACE')
         print(f'Connecting as {self.name} to {self.mqtt_ip}:{self.mqtt_port} under namespace: {self.mqtt_ns}')
+        if not self.mqtt_ns:
+            print('VRVIZ_MQTT_BROKER_NAMESPACE envvar is empty, quitting.')
+            quit()
+
 
         # Acquire Config Files
         self.rviz_config = os.getenv('VRVIZ_TABLE_CONFIG')
+        if not self.rviz_config:
+            print('VRVIZ_TABLE_CONFIG envvar is empty, quitting.')
+            quit()
         self.config = dict()
         self.load_config()
 
@@ -185,6 +192,8 @@ class FarmConnector(Node):
         print(data[:50]+'...' if len(data)>50 else data)
 
         # Publish msg to mqtt
+        print(topic)
+        print(self.mqtt_ns)
         mqtttopic = self.mqtt_ns + topic
         self.mqtt_client.publish(mqtttopic, data, retain=False)
 

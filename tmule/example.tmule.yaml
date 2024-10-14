@@ -15,7 +15,7 @@ init_cmd: |
 windows:
 - name: vrviz_broker
   panes:
-  - [ $VRVIZ_MQTT_BROKER_IP != mqtt.lcas.group ] && ros2 run vrviz broker.sh
+  - '[ $VRVIZ_MQTT_BROKER_IP != mqtt.lcas.group ] && ros2 run vrviz broker.sh'
   - ros2 run vrviz server.py
 
 - name: rviz
