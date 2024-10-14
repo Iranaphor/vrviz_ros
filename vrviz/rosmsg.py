@@ -13,14 +13,30 @@ def convert_ros_message_to_dictionary(rosmsg):
     dict_obj = dict()
 
     # Loop through each property in the rosmsg
+    #try:
+    #    rosmsg._fields_and_field_types.items()
+    #except:
+    #   return
+
     for property_name, property_type in rosmsg._fields_and_field_types.items():
         property = getattr(rosmsg, property_name)
+
+        # If having problems, debug using this:
+        #if len(str(property)) > 1000:
+        #    print(property_name, property_type, str(property)[:1000])
+        #else:
+        #   print(property_name, property_type, str(property))
 
         # If the property is a list of objects i.e. sequence<uint8>
         if 'sequence' in property_type:
             data = []
-            for item in property:
-                data += [convert_ros_message_to_dictionary(item)]
+            subtype = property_type.split('<')[1].split('>')[0]
+            if '/' in subtype or '[' in subtype:
+                for item in property:
+                    data += [convert_ros_message_to_dictionary(item)]
+            else:
+                for item in property:
+                    data += [item]
 
         # If the property is another rosmsg object i.e. geometry_msg/msg/Point
         elif '/' in property_type:

@@ -18,17 +18,17 @@ windows:
   - '[ $VRVIZ_MQTT_BROKER_IP != mqtt.lcas.group ] && ros2 run vrviz broker.sh'
   - ros2 run vrviz server.py
 
-- name: rviz
-  panes:
+#- name: rviz
+#  panes:
   - rviz2 -d $VRVIZ_TABLE_CONFIG
-  - ros2 run rasberry_coordination_core agent_markers.py
+#  - ros2 run rasberry_coordination_core agent_markers.py
 
-- name: environment
-  panes:
-  - ros2 launch environment_common environment.launch.py
-  check: "ros2 topic echo /topomap_marker2/vis --once"
+#- name: environment
+#  panes:
+  - ros2 launch environment_common environment.launch.py use_rviz:=false
+#  check: "ros2 topic echo /topomap_marker2/vis --once"
 
-- name: coordinator
-  panes:
-  - ros2 run rasberry_coordination_core coordinator.py $COORDINATOR_CONFIG
+#- name: coordinator
+#  panes:
+#  - ros2 run rasberry_coordination_core coordinator.py $COORDINATOR_CONFIG
 

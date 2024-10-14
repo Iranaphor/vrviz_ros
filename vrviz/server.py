@@ -32,6 +32,9 @@ class FarmConnector(Node):
         self.mqtt_port = int(os.getenv('VRVIZ_MQTT_BROKER_PORT'))
         self.mqtt_ns = os.getenv('VRVIZ_MQTT_BROKER_NAMESPACE')
         print(f'Connecting as {self.name} to {self.mqtt_ip}:{self.mqtt_port} under namespace: {self.mqtt_ns}')
+        if not self.name:
+            print('VRVIZ_MQTT_CLIENT_NAME envvar is empty, quitting.')
+            quit()
         if not self.mqtt_ns:
             print('VRVIZ_MQTT_BROKER_NAMESPACE envvar is empty, quitting.')
             quit()
@@ -53,21 +56,28 @@ class FarmConnector(Node):
         self.subs = []
         self.create_subscription(Empty, '/load_config', self.load_config, 10)
 
+
     def connect_to_mqtt(self):
-        """ MQTT management functions """
-        self.mqtt_client = mqtt.Client(self.name)
-        self.mqtt_client.on_connect = self.on_connect
-        self.mqtt_client.on_message = self.on_message
         try:
-            print('Connecting to broker...')
+            # Test with both pre and post paho 2.0.0
+            try:
+                self.get_logger().warn('running with paho version post-2.0.0')
+                ver = mqtt.CallbackAPIVersion.VERSION1
+                self.mqtt_client = mqtt.Client(ver, self.name)
+            except Exception as e:
+                self.get_logger().warn(str(e))
+                self.get_logger().warn('running with paho version pre-2.0.0')
+                self.mqtt_client = mqtt.Client(self.name)
+            self.mqtt_client.on_connect = self.on_connect
+            self.mqtt_client.on_message = self.on_message
             self.mqtt_client.connect(self.mqtt_ip, self.mqtt_port)
-        except:
-            print('Connection failed, attempting reconnect...')
-            sleep(1)
-            self.connect_to_mqtt()
-            return
-        print('Connection established.\n')
-        self.mqtt_client.loop_start()
+            self.mqtt_client.loop_start()
+        except Exception as e:
+            self.get_logger().warn(str(e))
+            self.get_logger().warn('Client connection failed. Not restarting.')
+
+
+
 
 
     def on_message(self, client, userdata, msg):
@@ -106,16 +116,19 @@ class FarmConnector(Node):
         self.config['Table']['Visualization Manager']['Displays'] = D
 
         # Publish config for Table
-        rviz_types = {#'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
-                        #'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
-                        'rviz_default_plugins/Odometry':'nav_msgs/msg/Odometry',
-                        'rviz_default_plugins/Pose':'geometry_msgs/msg/PoseStamped',
-                        'rviz_default_plugins/PointStamped':'geometry_msgs/msg/PointStamped',
-                        'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'}
-        
+        rviz_types = {
+            #'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
+            #'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
+            'rviz_default_plugins/Map': 'nav_msgs/msg/OccupancyGrid',
+            'rviz_default_plugins/Odometry':'nav_msgs/msg/Odometry',
+            'rviz_default_plugins/Pose':'geometry_msgs/msg/PoseStamped',
+            'rviz_default_plugins/PointStamped':'geometry_msgs/msg/PointStamped',
+            'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'
+        }
+
         # Filter classes which have not been implemented yet
         self.config['Table']['Visualization Manager']['Displays'] = [
-                t for t in self.config['Table']['Visualization Manager']['Displays'] 
+                t for t in self.config['Table']['Visualization Manager']['Displays']
                 if t['Class'] in rviz_types.keys()
         ]
 

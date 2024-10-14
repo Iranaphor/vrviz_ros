@@ -6,6 +6,7 @@ Panels:
       Expanded:
         - /Topological Map1/Namespaces1
         - /Pose1
+        - /Map1/Topic1
       Splitter Ratio: 0.5
     Tree Height: 737
   - Class: rviz_common/Selection
@@ -51,11 +52,7 @@ Visualization Manager:
       Enabled: true
       Name: Topological Map
       Namespaces:
-        /edges: true
-        /legend: true
-        /names: true
-        /nodes: true
-        /zones: true
+        {}
       Topic:
         Depth: 5
         Durability Policy: Volatile
@@ -229,6 +226,27 @@ Visualization Manager:
         Reliability Policy: Reliable
         Value: /initialpose
       Value: true
+    - Alpha: 0.699999988079071
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 119; 118; 123
@@ -274,7 +292,7 @@ Visualization Manager:
   Value: true
   Views:
     Current:
-      Angle: 2.764998197555542
+      Angle: 6.275002956390381
       Class: rviz_default_plugins/TopDownOrtho
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
@@ -284,11 +302,11 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Scale: 39.69054412841797
+      Scale: 16.002349853515625
       Target Frame: map
       Value: TopDownOrtho (rviz_default_plugins)
-      X: 12.555335998535156
-      Y: -5.07250452041626
+      X: 2.249931573867798
+      Y: 1.5272763967514038
     Saved: ~
 Window Geometry:
   Displays:
@@ -307,4 +325,4 @@ Window Geometry:
     collapsed: false
   Width: 1920
   X: 0
-  Y: 27
+  Y: 333
