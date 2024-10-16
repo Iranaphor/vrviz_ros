@@ -119,6 +119,7 @@ class FarmConnector(Node):
         rviz_types = {
             #'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
             #'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
+            'rviz_default_plugins/LaserScan': 'sensor_msgs/msg/LaserScan',
             'rviz_default_plugins/Map': 'nav_msgs/msg/OccupancyGrid',
             'rviz_default_plugins/Odometry':'nav_msgs/msg/Odometry',
             'rviz_default_plugins/Pose':'geometry_msgs/msg/PoseStamped',
@@ -208,7 +209,7 @@ class FarmConnector(Node):
         print(topic)
         print(self.mqtt_ns)
         mqtttopic = self.mqtt_ns + topic
-        self.mqtt_client.publish(mqtttopic, data, retain=False)
+        self.mqtt_client.publish(mqtttopic, data, retain=True)
 
 
 def main(args=None):
