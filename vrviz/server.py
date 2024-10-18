@@ -119,6 +119,7 @@ class FarmConnector(Node):
         rviz_types = {
             #'rviz_default_plugins/Path': 'nav_msgs/msg/Path',
             #'rviz_default_plugins/MarkerArray': 'visualization_msgs/msg/MarkerArray',
+            'rviz_default_plugins/PointCloud2': 'sensor_msgs/msg/PointCloud2',
             'rviz_default_plugins/LaserScan': 'sensor_msgs/msg/LaserScan',
             'rviz_default_plugins/Map': 'nav_msgs/msg/OccupancyGrid',
             'rviz_default_plugins/Odometry':'nav_msgs/msg/Odometry',

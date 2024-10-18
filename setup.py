@@ -11,7 +11,8 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (f'lib/{package_name}', [f'{package_name}/broker.sh']),
-        (f'share/{package_name}/config', [f'config/mosquitto.conf'])
+        (f'share/{package_name}/config', [f'config/mosquitto.conf']),
+        (f'share/{package_name}/config', [f'config/pointcloud_render.rviz'])
     ],
     install_requires=['setuptools', 'paho-mqtt', 'msgpack', 'tmule==1.5.9'],
     zip_safe=True,
