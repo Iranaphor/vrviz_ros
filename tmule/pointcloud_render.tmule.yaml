@@ -10,7 +10,7 @@ init_cmd: |
   export DISPLAY=:0
 
   # Define Demo RViZ File
-  export VRVIZ_TABLE_CONFIG="$(ros2 pkg prefix vrviz)/share/vrviz/config/pointcloud_render.rviz"
+  export VRVIZ_TABLE_CONFIG="$(ros2 pkg prefix vrviz)/share/vrviz/config/pointcloud_render.rviz.yaml"
 
   # Source the environment variables for the scenario
   clear -x
