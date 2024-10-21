@@ -21,6 +21,5 @@ windows:
   - '[ $VRVIZ_MQTT_BROKER_IP != mqtt.lcas.group ] && ros2 run vrviz broker.sh'
   - ros2 run vrviz server.py
   - rviz2 -d $VRVIZ_TABLE_CONFIG
-  - ros2 launch environment_common environment.launch.py use_rviz:=false
   - ros2 run ply_publisher publish_file.py
 

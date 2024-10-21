@@ -17,6 +17,7 @@ from rclpy.qos import QoSProfile, HistoryPolicy, ReliabilityPolicy, DurabilityPo
 
 # Msg handling
 import importlib
+from tf2_msgs.msg import TFMessage
 from std_msgs.msg import String, Empty
 from vrviz.rosmsg import convert_ros_message_to_dictionary, get_rosmsg_obj
 
@@ -206,6 +207,30 @@ class FarmConnector(Node):
             qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
             self.create_subscription(rosmsg_type, topic_name, lambda msg, t=topic_name: self.ros_cb(msg, t), qos)
             print('|', 'subscribed')
+
+        # Start TF Publisher
+        print('')
+        print('Topic name: /tf')
+        r, h, d = R['Reliable'], H['Keep Last'], D['Volatile']
+        qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
+        self.create_subscription(TFMessage, '/tf', self.tf_cb, qos)
+        print('|', 'subscribed')
+
+    def tf_cb(self, msg, topic):
+        """ ROS Callback finction to service all ROS subscribers """
+        print('')
+        print('|','ROS Message recieved: [' + topic + ']')
+
+        # Encode msg to JSON
+        data = json.dumps(convert_ros_message_to_dictionary(msg))
+        print(data[:50]+'...' if len(data)>50 else data)
+
+        # Publish msg to mqtt
+        print(topic)
+        print(self.mqtt_ns)
+        mqtttopic = self.mqtt_ns + topic
+        self.mqtt_client.publish(mqtttopic, data, retain=True)
+
 
     def ros_cb(self, msg, topic):
         """ ROS Callback finction to service all ROS subscribers """
