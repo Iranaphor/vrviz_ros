@@ -110,8 +110,6 @@ class FarmConnector(Node):
         while any([d['Class'] == 'rviz_common/Group' for d in D]):
             D = [d for d in D if d['Class'] != 'rviz_common/Group'] + \
                 sum([d['Displays'] for d in D if d['Class'] == 'rviz_common/Group'],[])
-
-        #
         D = [d for d in D if d['Value'] == True]
         self.config['Table']['Visualization Manager']['Displays'] = D
 
@@ -128,11 +126,26 @@ class FarmConnector(Node):
             'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'
         }
 
+        # Print out ignored topics
+        print('\n\nIgnoring the following displays:')
+        out = [['Topic','Class']]
+        for t in self.config['Table']['Visualization Manager']['Displays']:
+            if t['Class'] not in rviz_types.keys():
+                if 'Topic' in t and 'Value' in t['Topic']:
+                    out += [[t['Topic']['Value'], t['Class']]]
+                else:
+                    out += [['', t['Class']]]
+        columns = list(zip(*out))
+        col_widths = [max(len(str(item)) for item in column) for column in columns]
+        for row in out:
+            print("| "+"  ".join(str(item).ljust(width) for item, width in zip(row, col_widths)))
+
         # Filter classes which have not been implemented yet
         self.config['Table']['Visualization Manager']['Displays'] = [
                 t for t in self.config['Table']['Visualization Manager']['Displays']
                 if t['Class'] in rviz_types.keys()
         ]
+
 
         self.mqtt_client.publish('vrviz/META', json.dumps(self.config['Table']), retain=True)
 
@@ -149,9 +162,6 @@ class FarmConnector(Node):
             # Skip if display is disabled
             if topic['Value'] == False:
                 print('|', 'disabled')
-                continue
-            if topic['Topic']['Value'] == '/topomap_marker2/vis':
-                print('|', 'topo disabled')
                 continue
 
 
