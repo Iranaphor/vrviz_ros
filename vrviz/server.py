@@ -210,25 +210,22 @@ class FarmConnector(Node):
 
         # Start TF Publisher
         print('')
-        print('Topic name: /tf')
-        r, h, d = R['Reliable'], H['Keep Last'], D['Volatile']
+        print('Topic name: /tf_static')
+        r, h, d = R['Reliable'], H['Keep Last'], D['Transient Local']
         qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
-        self.create_subscription(TFMessage, '/tf', self.tf_cb, qos)
+        self.create_subscription(TFMessage, '/tf_static', self.tf_cb, qos)
         print('|', 'subscribed')
 
-    def tf_cb(self, msg, topic):
-        """ ROS Callback finction to service all ROS subscribers """
+    def tf_cb(self, msg):
         print('')
-        print('|','ROS Message recieved: [' + topic + ']')
+        print('|','TF2 Message recieved: [/tf_static]')
 
         # Encode msg to JSON
         data = json.dumps(convert_ros_message_to_dictionary(msg))
         print(data[:50]+'...' if len(data)>50 else data)
 
         # Publish msg to mqtt
-        print(topic)
-        print(self.mqtt_ns)
-        mqtttopic = self.mqtt_ns + topic
+        mqtttopic = self.mqtt_ns + '/tf_static'
         self.mqtt_client.publish(mqtttopic, data, retain=True)
 
 
