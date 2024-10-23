@@ -148,7 +148,7 @@ class FarmConnector(Node):
         ]
 
 
-        self.mqtt_client.publish('vrviz/META', json.dumps(self.config['Table']), retain=True)
+        self.mqtt_client.publish('vrviz/META/rviz_config', json.dumps(self.config['Table']), retain=True)
 
         for topic in self.config['Table']['Visualization Manager']['Displays']:
 
@@ -225,7 +225,7 @@ class FarmConnector(Node):
         print(data[:50]+'...' if len(data)>50 else data)
 
         # Publish msg to mqtt
-        mqtttopic = self.mqtt_ns + '/tf_static'
+        mqtttopic = self.mqtt_ns + '/TF/tf_static'
         self.mqtt_client.publish(mqtttopic, data, retain=True)
 
 
@@ -241,7 +241,7 @@ class FarmConnector(Node):
         # Publish msg to mqtt
         print(topic)
         print(self.mqtt_ns)
-        mqtttopic = self.mqtt_ns + topic
+        mqtttopic = self.mqtt_ns + '/TOPIC' + topic
         self.mqtt_client.publish(mqtttopic, data, retain=True)
 
 

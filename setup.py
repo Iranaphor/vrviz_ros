@@ -21,7 +21,6 @@ setup(
     maintainer_email='primordia@live.com',
     description='TODO: Package description',
     license='TODO: License declaration',
-    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'server.py = vrviz.server:main'

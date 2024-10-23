@@ -5,8 +5,8 @@ init_cmd: |
   cd @TMULE_CONFIG_DIR@ || true
   set -o pipefail
 
-  # Get and source the details for the workspace from rasberryrc
-  source $WS_DIR/src/runcom.sh
+  # Source system configuration
+  source ~/.bashrc
   export DISPLAY=:0
 
   # Define Demo RViZ File
