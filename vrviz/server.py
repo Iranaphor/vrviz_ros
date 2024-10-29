@@ -17,6 +17,7 @@ from rclpy.qos import QoSProfile, HistoryPolicy, ReliabilityPolicy, DurabilityPo
 
 # Msg handling
 import importlib
+from tf2_msgs.msg import TFMessage
 from std_msgs.msg import String, Empty
 from vrviz.rosmsg import convert_ros_message_to_dictionary, get_rosmsg_obj
 
@@ -110,8 +111,6 @@ class FarmConnector(Node):
         while any([d['Class'] == 'rviz_common/Group' for d in D]):
             D = [d for d in D if d['Class'] != 'rviz_common/Group'] + \
                 sum([d['Displays'] for d in D if d['Class'] == 'rviz_common/Group'],[])
-
-        #
         D = [d for d in D if d['Value'] == True]
         self.config['Table']['Visualization Manager']['Displays'] = D
 
@@ -128,13 +127,28 @@ class FarmConnector(Node):
             'rviz_default_plugins/PoseWithCovariance':'geometry_msgs/msg/PoseWithCovarianceStamped'
         }
 
+        # Print out ignored topics
+        print('\n\nIgnoring the following displays:')
+        out = [['Topic','Class']]
+        for t in self.config['Table']['Visualization Manager']['Displays']:
+            if t['Class'] not in rviz_types.keys():
+                if 'Topic' in t and 'Value' in t['Topic']:
+                    out += [[t['Topic']['Value'], t['Class']]]
+                else:
+                    out += [['', t['Class']]]
+        columns = list(zip(*out))
+        col_widths = [max(len(str(item)) for item in column) for column in columns]
+        for row in out:
+            print("| "+"  ".join(str(item).ljust(width) for item, width in zip(row, col_widths)))
+
         # Filter classes which have not been implemented yet
         self.config['Table']['Visualization Manager']['Displays'] = [
                 t for t in self.config['Table']['Visualization Manager']['Displays']
                 if t['Class'] in rviz_types.keys()
         ]
 
-        self.mqtt_client.publish('vrviz/META', json.dumps(self.config['Table']), retain=True)
+
+        self.mqtt_client.publish('vrviz/META/rviz_config', json.dumps(self.config['Table']), retain=True)
 
         for topic in self.config['Table']['Visualization Manager']['Displays']:
 
@@ -149,9 +163,6 @@ class FarmConnector(Node):
             # Skip if display is disabled
             if topic['Value'] == False:
                 print('|', 'disabled')
-                continue
-            if topic['Topic']['Value'] == '/topomap_marker2/vis':
-                print('|', 'topo disabled')
                 continue
 
 
@@ -197,6 +208,47 @@ class FarmConnector(Node):
             self.create_subscription(rosmsg_type, topic_name, lambda msg, t=topic_name: self.ros_cb(msg, t), qos)
             print('|', 'subscribed')
 
+        # Start TF Publisher
+        print('')
+        print('Topic names: /tf')
+        r, h, d = R['Reliable'], H['Keep Last'], D['Volatile']
+        qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
+        self.create_subscription(TFMessage, '/tf', self.tf_cb, qos)
+        print('|', 'subscribed')
+
+        # Start Static TF Publisher
+        print('')
+        print('Topic names: /tf_static')
+        r, h, d = R['Reliable'], H['Keep Last'], D['Volatile']
+        qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
+        self.create_subscription(TFMessage, '/tf_static', self.tf_static_cb, qos)
+        print('|', 'subscribed')
+
+    def tf_cb(self, msg):
+        print('')
+        print('|','TF2 Message recieved: [/tf]')
+
+        # Encode msg to JSON
+        data = json.dumps(convert_ros_message_to_dictionary(msg))
+        print(data[:50]+'...' if len(data)>50 else data)
+
+        # Publish msg to mqtt
+        mqtttopic = self.mqtt_ns + '/TF/tf'
+        self.mqtt_client.publish(mqtttopic, data, retain=True)
+
+    def tf_static_cb(self, msg):
+        print('')
+        print('|','TF2 Message recieved: [/tf_static]')
+
+        # Encode msg to JSON
+        data = json.dumps(convert_ros_message_to_dictionary(msg))
+        print(data[:50]+'...' if len(data)>50 else data)
+
+        # Publish msg to mqtt
+        mqtttopic = self.mqtt_ns + '/TF/tf_static'
+        self.mqtt_client.publish(mqtttopic, data, retain=True)
+
+
     def ros_cb(self, msg, topic):
         """ ROS Callback finction to service all ROS subscribers """
         print('')
@@ -209,7 +261,7 @@ class FarmConnector(Node):
         # Publish msg to mqtt
         print(topic)
         print(self.mqtt_ns)
-        mqtttopic = self.mqtt_ns + topic
+        mqtttopic = self.mqtt_ns + '/TOPIC' + topic
         self.mqtt_client.publish(mqtttopic, data, retain=True)
 
 
