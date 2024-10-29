@@ -210,13 +210,33 @@ class FarmConnector(Node):
 
         # Start TF Publisher
         print('')
-        print('Topic name: /tf_static')
-        r, h, d = R['Reliable'], H['Keep Last'], D['Transient Local']
+        print('Topic names: /tf')
+        r, h, d = R['Reliable'], H['Keep Last'], D['Volatile']
         qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
-        self.create_subscription(TFMessage, '/tf_static', self.tf_cb, qos)
+        self.create_subscription(TFMessage, '/tf', self.tf_cb, qos)
+        print('|', 'subscribed')
+
+        # Start Static TF Publisher
+        print('')
+        print('Topic names: /tf_static')
+        r, h, d = R['Reliable'], H['Keep Last'], D['Volatile']
+        qos = QoSProfile(depth=depth, reliability=r, history=h, durability=d)
+        self.create_subscription(TFMessage, '/tf_static', self.tf_static_cb, qos)
         print('|', 'subscribed')
 
     def tf_cb(self, msg):
+        print('')
+        print('|','TF2 Message recieved: [/tf]')
+
+        # Encode msg to JSON
+        data = json.dumps(convert_ros_message_to_dictionary(msg))
+        print(data[:50]+'...' if len(data)>50 else data)
+
+        # Publish msg to mqtt
+        mqtttopic = self.mqtt_ns + '/TF/tf'
+        self.mqtt_client.publish(mqtttopic, data, retain=True)
+
+    def tf_static_cb(self, msg):
         print('')
         print('|','TF2 Message recieved: [/tf_static]')
 
